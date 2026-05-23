@@ -1,4 +1,4 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === 'production' ? 'https://xsplit-main.onrender.com/api' : 'http://localhost:5000/api');
+export const API_URL = '/api';
 
 export const fetchApi = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;

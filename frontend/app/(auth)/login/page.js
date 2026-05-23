@@ -9,6 +9,7 @@ import { Mail, Lock, User, ArrowRight, Loader2, AlertCircle } from 'lucide-react
 import confetti from 'canvas-confetti';
 import { fetchApi } from '@/lib/api';
 import { useAuth } from '@/components/layout/AuthProvider';
+import { useRouter } from 'next/navigation';
 
 // Local copy of schemas to ensure browser compatibility if shared schema uses CJS
 const loginSchema = z.object({
@@ -24,6 +25,7 @@ export default function LoginPage() {
   const [needsName, setNeedsName] = useState(false);
   const [apiError, setApiError] = useState('');
   const { login } = useAuth();
+  const router = useRouter();
   
   const currentSchema = needsName ? signupSchema : loginSchema;
   
@@ -82,7 +84,7 @@ export default function LoginPage() {
       
       // Delay redirect slightly for confetti
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        router.push('/dashboard');
       }, 1000);
 
     } catch (err) {
