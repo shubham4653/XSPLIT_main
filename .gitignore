@@ -1,25 +1,88 @@
-# .gitignore generated for XSPLIT project
-# Node.js dependencies
+# ============================================================
+# XSPLIT - .gitignore
+# Fullstack: Next.js (frontend) + Node.js/Express (backend)
+# ============================================================
+
+# ---------------------------
+# Dependencies
+# ---------------------------
 node_modules/
-# Build output
+**/node_modules/
+node_modules_old/
+
+# ---------------------------
+# Next.js (Frontend)
+# ---------------------------
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.vercel/
+
+# ---------------------------
+# Build Output
+# ---------------------------
 dist/
 build/
+out/
+
+# ---------------------------
+# Environment Variables
+# ---------------------------
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+**/. env
+**/.env.local
+**/.env.*.local
+
+# ---------------------------
 # Logs
+# ---------------------------
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-# Environment files
-.env
-.env.local
-.env.*.local
-# OS generated files
+pnpm-debug.log*
+
+# ---------------------------
+# OS Generated Files
+# ---------------------------
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-# IDE/editor directories
+desktop.ini
+
+# ---------------------------
+# IDE / Editor
+# ---------------------------
 .vscode/
 .idea/
-# Python caches (if any)
-__pycache__/
-*.py[cod]
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ---------------------------
+# Temporary / Debug Scripts
+# ---------------------------
+backend/check_logic.js
+backend/check_users.js
+backend/fix_nan.js
+backend/test_dashboard.js
+
+# ---------------------------
 # Misc
-*.log
+# ---------------------------
+.cache/
+.parcel-cache/
+coverage/
+.nyc_output/
+*.tsbuildinfo
