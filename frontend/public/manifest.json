@@ -1,0 +1,10 @@
+{
+  "name": "XSPLIT",
+  "short_name": "XSPLIT",
+  "description": "Mobile Expense Splitting App",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#FDFCF8",
+  "theme_color": "#FDFCF8",
+  "orientation": "portrait"
+}

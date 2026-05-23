@@ -1,0 +1,217 @@
+"use client";
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Camera, X, Loader2 } from 'lucide-react';
+import SplitCalculator from './SplitCalculator';
+import { fetchApi } from '@/lib/api';
+
+const CATEGORIES = ['Food', 'Transport', 'Entertainment', 'Housing', 'Utilities', 'Other'];
+
+export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
+  const [receiptBase64, setReceiptBase64] = useState(null);
+  const [splits, setSplits] = useState([]);
+  const [apiError, setApiError] = useState('');
+
+  const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+    defaultValues: {
+      description: '',
+      amount: '',
+      category: 'Food'
+    }
+  });
+
+  const amount = watch('amount');
+
+  // Compress image to < 500KB WebP
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Quality 0.7 usually keeps it under 500kb
+        const dataUrl = canvas.toDataURL('image/webp', 0.7);
+        setReceiptBase64(dataUrl);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const onSubmit = async (data) => {
+    setApiError('');
+    
+    const totalSplit = splits.reduce((sum, split) => sum + Number(split.amountOwed), 0);
+    if (Math.abs(totalSplit - Number(data.amount)) > 0.05) {
+      setApiError('Split amounts must exactly equal the total amount.');
+      return;
+    }
+
+    try {
+      const payload = {
+        groupId,
+        description: data.description,
+        amount: Number(data.amount),
+        category: data.category.toLowerCase(),
+        splits,
+        receipt: receiptBase64
+      };
+
+      await fetchApi('/expenses', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      onSuccess();
+    } catch (err) {
+      setApiError(err.message || 'Failed to add expense');
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ y: '100%' }}
+      animate={{ y: 0 }}
+      exit={{ y: '100%' }}
+      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+      className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.1)] border-t border-stone-200"
+    >
+      <div className="p-4 flex justify-between items-center border-b border-stone-100">
+        <h2 className="text-xl font-bold font-serif text-stone-900 tracking-tight">Add Expense</h2>
+        <button 
+          onClick={onCancel}
+          className="p-2 bg-stone-100 rounded-full text-stone-500 hover:bg-stone-200 transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 overflow-y-auto pb-20 px-4 pt-6">
+        
+        {/* Description Field */}
+        <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 focus-within:border-blush-300 focus-within:ring-2 focus-within:ring-blush-200/50 transition-all">
+          <label className="block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">Description</label>
+          <input
+            {...register('description', { required: true })}
+            placeholder="What was this for?"
+            className="w-full bg-transparent text-stone-900 placeholder:text-stone-400 focus:outline-none font-medium text-lg"
+          />
+          {errors.description && <p className="text-red-400 text-sm mt-1">Description is required</p>}
+        </div>
+
+        {/* Amount Field (Large) */}
+        <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 focus-within:border-mint-300 focus-within:ring-2 focus-within:ring-mint-200/50 transition-all flex items-center justify-between">
+          <div>
+            <label className="block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">Amount</label>
+            <div className="flex items-center text-3xl font-mono text-stone-900">
+              <span className="text-stone-400 mr-1">₹</span>
+              <input
+                {...register('amount', { required: true, valueAsNumber: true })}
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                className="w-full bg-transparent focus:outline-none"
+              />
+            </div>
+          </div>
+          {errors.amount && <p className="text-red-400 text-sm mt-1">Required</p>}
+        </div>
+
+        {/* Category Picker */}
+        <div>
+          <label className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-3 block">Category</label>
+          <div className="flex overflow-x-auto space-x-2 pb-2 hide-scrollbar">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setValue('category', cat)}
+                className={`px-4 py-2 rounded-full border transition-all ${
+                  watch('category') === cat 
+                    ? 'bg-sky-100 border-sky-200 text-sky-700 font-semibold' 
+                    : 'bg-stone-50 border-stone-200 text-stone-600 hover:bg-stone-100'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Receipt Upload */}
+        <div>
+          <label className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-2 block">Receipt (Optional)</label>
+          {receiptBase64 ? (
+            <div className="relative w-24 h-24 rounded-2xl overflow-hidden border border-stone-200">
+              <img src={receiptBase64} alt="Receipt" className="w-full h-full object-cover" />
+              <button 
+                type="button" 
+                onClick={() => setReceiptBase64(null)}
+                className="absolute top-1 right-1 bg-stone-900/50 p-1 rounded-full text-white"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          ) : (
+            <label className="flex items-center justify-center w-full h-20 bg-stone-50 border-2 border-dashed border-stone-200 rounded-2xl cursor-pointer hover:bg-stone-100 transition-colors">
+              <Camera className="w-6 h-6 text-stone-400" />
+              <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+            </label>
+          )}
+        </div>
+
+        {/* Split Calculator */}
+        <div>
+          <label className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-2 block">Split Details</label>
+          <div className="bg-stone-50 rounded-2xl p-4 border border-stone-100">
+            <SplitCalculator 
+              members={members} 
+              totalAmount={Number(amount) || 0} 
+              onChange={setSplits} 
+            />
+          </div>
+        </div>
+
+        {apiError && <p className="text-red-500 text-sm text-center">{apiError}</p>}
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-stone-900 text-white rounded-2xl py-4 font-sans font-medium uppercase tracking-wide hover:bg-stone-800 transition-colors"
+        >
+          {isSubmitting ? (
+            <Loader2 className="w-6 h-6 animate-spin mx-auto" />
+          ) : (
+            'Save Expense'
+          )}
+        </button>
+      </form>
+    </motion.div>
+  );
+}
