@@ -18,7 +18,7 @@ app.use(helmet());
 // Enable CORS
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://xsplit-taupe.vercel.app',
+  'https://xsplitco.vercel.app',
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
