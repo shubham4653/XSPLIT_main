@@ -99,12 +99,18 @@ const getActivityFeed = async (req, res) => {
     const groups = await Group.find({ members: userId }).lean();
     const groupIds = groups.map(g => g._id);
 
-    // Fetch latest 50 expenses
-    const expenses = await Expense.find({ groupId: { $in: groupIds } })
+    // Fetch recent expenses where the user was involved
+    const expenses = await Expense.find({ 
+      groupId: { $in: groupIds },
+      $or: [
+        { paidBy: userId },
+        { 'splits.user': userId }
+      ]
+    })
       .populate('groupId', 'name icon color')
       .populate('paidBy', 'name profilePicture')
       .sort({ date: -1, createdAt: -1 })
-      .limit(50);
+      .limit(15);
 
     res.status(200).json({ success: true, data: expenses });
   } catch (error) {

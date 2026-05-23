@@ -87,7 +87,12 @@ export default function ActivityPage() {
                         <div className="text-xl">{activity.groupId?.icon || '🗂️'}</div>
                         <div>
                           <p className="text-sm" style={{ color: 'var(--muted)' }}>{activity.groupId?.name}</p>
-                          <h3 className="font-bold" style={{ color: 'var(--foreground)' }}>{activity.description}</h3>
+                          <div className="flex items-center space-x-2">
+                            <h3 className="font-bold" style={{ color: 'var(--foreground)' }}>{activity.description}</h3>
+                            {activity.paidBy._id === user?._id && (
+                              <span className="text-[10px] bg-mint-100 text-mint-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-0.5">You Paid</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <span className="font-bold text-blush-400">₹{activity.amount.toFixed(2)}</span>

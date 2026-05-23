@@ -98,10 +98,10 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
 
   return (
     <div
-      className="bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-stone-200"
+      className="bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-stone-200 flex flex-col max-h-[90vh]"
       style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
     >
-      <div className="p-4 flex justify-between items-center border-b" style={{ borderColor: 'var(--card-border)' }}>
+      <div className="p-4 flex justify-between items-center border-b shrink-0" style={{ borderColor: 'var(--card-border)' }}>
         <h2 className="text-xl font-bold font-serif tracking-tight" style={{ color: 'var(--foreground)' }}>Add Expense</h2>
         <button 
           onClick={onCancel}
@@ -113,12 +113,12 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
 
       {/* Error banner — always visible at top */}
       {apiError && (
-        <div className="mx-4 mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium">
+        <div className="mx-4 mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium shrink-0">
           ⚠️ {apiError}
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 overflow-y-auto pb-20 px-4 pt-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 overflow-y-auto flex-1 pb-20 px-4 pt-6">
         
         {/* Description Field */}
         <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 focus-within:border-blush-300 focus-within:ring-2 focus-within:ring-blush-200/50 transition-all">

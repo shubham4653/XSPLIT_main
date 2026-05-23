@@ -94,9 +94,14 @@ export default function ExpenseList({ expenses, currentUser, onExpenseDeleted })
                     {CATEGORY_ICONS[expense.category] || expense.category?.charAt(0).toUpperCase() || '🏷️'}
                   </div>
                   <div>
-                    <h4 className="font-bold font-serif tracking-tight text-lg" style={{ color: 'var(--foreground)' }}>
-                      {expense.description}
-                    </h4>
+                    <div className="flex items-center space-x-2">
+                      <h4 className="font-bold font-serif tracking-tight text-lg" style={{ color: 'var(--foreground)' }}>
+                        {expense.description}
+                      </h4>
+                      {expense.paidBy._id === currentUser?._id && (
+                        <span className="text-[10px] bg-mint-100 text-mint-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider mt-0.5 shrink-0">You Paid</span>
+                      )}
+                    </div>
                     <p className="text-xs font-medium tracking-wide uppercase" style={{ color: 'var(--muted)' }}>
                       Paid by {expense.paidBy.name === currentUser?.name ? 'You' : expense.paidBy.name}
                     </p>
