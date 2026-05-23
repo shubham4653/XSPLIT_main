@@ -14,19 +14,21 @@ const generateTokens = (res, userId) => {
     expiresIn: '7d'
   });
 
+  const isProd = process.env.NODE_ENV === 'production';
+
   // Set Access Token in HTTP-only cookie
   res.cookie('jwt', accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 
   // Set Refresh Token in HTTP-only cookie
   res.cookie('jwt_refresh', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 
@@ -34,14 +36,16 @@ const generateTokens = (res, userId) => {
 };
 
 const clearTokens = (res) => {
-  res.cookie('jwt', '', {
+  const isProd = process.env.NODE_ENV === 'production';
+  const cookieOptions = {
     httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'strict',
     expires: new Date(0)
-  });
-  res.cookie('jwt_refresh', '', {
-    httpOnly: true,
-    expires: new Date(0)
-  });
+  };
+
+  res.cookie('jwt', '', cookieOptions);
+  res.cookie('jwt_refresh', '', cookieOptions);
 };
 
 module.exports = { generateTokens, clearTokens };
