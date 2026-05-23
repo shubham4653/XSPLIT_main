@@ -1,6 +1,7 @@
 import { Playfair_Display, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/layout/AuthProvider";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -33,9 +34,11 @@ export default function RootLayout({ children }) {
       className={`${playfair.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

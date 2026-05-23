@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { Camera, X, Loader2 } from 'lucide-react';
 import SplitCalculator from './SplitCalculator';
@@ -66,10 +67,10 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
 
   const onSubmit = async (data) => {
     setApiError('');
-    
+
     const totalSplit = splits.reduce((sum, split) => sum + Number(split.amountOwed), 0);
     if (Math.abs(totalSplit - Number(data.amount)) > 0.05) {
-      setApiError('Split amounts must exactly equal the total amount.');
+      setApiError('Split amounts must equal the total. Please check the split section below.');
       return;
     }
 
@@ -90,20 +91,18 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
 
       onSuccess();
     } catch (err) {
-      setApiError(err.message || 'Failed to add expense');
+      console.error('Expense creation failed:', err);
+      setApiError(err.message || 'Failed to add expense. Please try again.');
     }
   };
 
   return (
-    <motion.div
-      initial={{ y: '100%' }}
-      animate={{ y: 0 }}
-      exit={{ y: '100%' }}
-      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      className="fixed inset-x-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.1)] border-t border-stone-200"
+    <div
+      className="bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-stone-200"
+      style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
     >
-      <div className="p-4 flex justify-between items-center border-b border-stone-100">
-        <h2 className="text-xl font-bold font-serif text-stone-900 tracking-tight">Add Expense</h2>
+      <div className="p-4 flex justify-between items-center border-b" style={{ borderColor: 'var(--card-border)' }}>
+        <h2 className="text-xl font-bold font-serif tracking-tight" style={{ color: 'var(--foreground)' }}>Add Expense</h2>
         <button 
           onClick={onCancel}
           className="p-2 bg-stone-100 rounded-full text-stone-500 hover:bg-stone-200 transition-colors"
@@ -111,6 +110,13 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
           <X className="w-5 h-5" />
         </button>
       </div>
+
+      {/* Error banner — always visible at top */}
+      {apiError && (
+        <div className="mx-4 mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium">
+          ⚠️ {apiError}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 overflow-y-auto pb-20 px-4 pt-6">
         
@@ -198,7 +204,7 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
           </div>
         </div>
 
-        {apiError && <p className="text-red-500 text-sm text-center">{apiError}</p>}
+
 
         <button
           type="submit"
@@ -212,6 +218,6 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
           )}
         </button>
       </form>
-    </motion.div>
+    </div>
   );
 }

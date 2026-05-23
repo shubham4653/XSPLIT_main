@@ -16,8 +16,9 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-t border-stone-200 pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.05)]">
-      <div className="flex justify-around items-center h-20 max-w-md mx-auto px-4 relative">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl border-t pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.05)]"
+         style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+      <div className="flex justify-around items-center h-20 max-w-2xl mx-auto px-4 relative">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -36,12 +37,13 @@ export default function BottomNav() {
             <Link 
               key={item.href} 
               href={item.href}
-              className={`flex flex-col items-center justify-center w-14 h-full space-y-1.5 transition-colors ${isActive ? 'text-stone-900' : 'text-stone-400 hover:text-stone-600'}`}
+              className="flex flex-col items-center justify-center w-14 h-full space-y-1.5 transition-colors"
+              style={{ color: isActive ? 'var(--foreground)' : 'var(--muted)' }}
             >
-              <div className={`p-2 rounded-2xl transition-all ${isActive ? 'bg-lavender-50' : ''}`}>
-                <Icon className={`w-6 h-6 ${isActive ? 'text-sky-400' : ''}`} />
+              <div className="p-2 rounded-2xl transition-all" style={{ background: isActive ? 'rgba(255,179,200,0.15)' : 'transparent' }}>
+                <Icon className={`w-6 h-6 ${isActive ? 'text-blush-400' : ''}`} />
               </div>
-              <span className={`text-[10px] font-medium tracking-wide ${isActive ? 'text-stone-900 font-semibold' : ''}`}>{item.label}</span>
+              <span className={`text-[10px] font-medium tracking-wide ${isActive ? 'font-semibold' : ''}`}>{item.label}</span>
             </Link>
           );
         })}

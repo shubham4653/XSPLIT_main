@@ -9,7 +9,13 @@ const notificationSchema = new mongoose.Schema({
   },
   type: { 
     type: String, 
-    enum: ['expense_added', 'group_invite', 'settlement', 'mention', 'reminder'] 
+    enum: ['expense_added', 'group_invite', 'settlement', 'mention', 'reminder'],
+    default: 'expense_added'
+  },
+  title: {
+    type: String,
+    trim: true,
+    default: 'New Notification'
   },
   message: {
     type: String,
@@ -23,7 +29,7 @@ const notificationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Group' 
   },
-  isRead: { 
+  read: { 
     type: Boolean, 
     default: false 
   }

@@ -43,7 +43,8 @@ const createExpense = async (req, res) => {
       .map(memberId => ({
         userId: memberId,
         type: 'expense_added',
-        message: `${req.user.name || 'Someone'} added "${description}" for ₹${amount.toFixed(2)} in ${group.name}.`,
+        title: `New expense in ${group.name}`,
+        message: `${req.user.name || 'Someone'} added "${description}" for ₹${amount.toFixed(2)}.`,
         relatedGroup: groupId,
         relatedExpense: expense._id
       }));

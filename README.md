@@ -1,6 +1,6 @@
-# XPENSE - Mobile Expense Splitting App
+# XSPLIT - Mobile Expense Splitting App
 
-XPENSE is a high-performance, mobile-first web application designed to track and settle shared expenses. Built with a sleek Neobrutalist design, it simplifies complex group debts using a greedy algorithm to calculate optimal transactions. 
+XSPLI is a high-performance, mobile-first web application designed to track and settle shared expenses. Built with a sleek Neobrutalist design, it simplifies complex group debts using a greedy algorithm to calculate optimal transactions. 
 
 ## 🚀 Features
 

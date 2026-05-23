@@ -36,9 +36,12 @@ export default function ExpenseList({ expenses, currentUser, onExpenseDeleted })
 
   if (!expenses || expenses.length === 0) {
     return (
-      <div className="text-center py-12 glass-card rounded-3xl border border-stone-200">
-        <ReceiptText className="w-12 h-12 text-stone-300 mx-auto mb-3" />
-        <p className="text-stone-500 font-light">No expenses yet. Add one to get started!</p>
+      <div
+        className="text-center py-12 rounded-3xl border"
+        style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+      >
+        <ReceiptText className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--muted)', opacity: 0.4 }} />
+        <p className="font-light" style={{ color: 'var(--muted)' }}>No expenses yet. Add one to get started!</p>
       </div>
     );
   }
@@ -47,9 +50,8 @@ export default function ExpenseList({ expenses, currentUser, onExpenseDeleted })
     <div className="space-y-3">
       <AnimatePresence>
         {expenses.map((expense) => {
-          // You can only delete if you paid or you are the owner (owner check handled by backend, but UI wise we'll just show it for payer for now)
           const canDelete = expense.paidBy._id === currentUser._id;
-          
+
           return (
             <motion.div
               key={expense._id}
@@ -59,10 +61,14 @@ export default function ExpenseList({ expenses, currentUser, onExpenseDeleted })
               exit={{ opacity: 0, scale: 0.95 }}
               className="relative rounded-2xl overflow-hidden mb-3 shadow-sm"
             >
-              {/* Background Delete Button revealed on swipe */}
+              {/* Delete revealed on swipe */}
               {canDelete && (
                 <div className="absolute inset-y-0 right-0 bg-coral-400 w-24 flex items-center justify-end px-5 rounded-2xl z-0">
-                  <button onClick={() => handleDelete(expense._id)} className="hover:scale-110 transition-transform">
+                  <button
+                    onClick={() => handleDelete(expense._id)}
+                    className="hover:scale-110 transition-transform"
+                    disabled={deletingId === expense._id}
+                  >
                     <Trash2 className="w-5 h-5 text-white" />
                   </button>
                 </div>
@@ -77,23 +83,31 @@ export default function ExpenseList({ expenses, currentUser, onExpenseDeleted })
                     handleDelete(expense._id);
                   }
                 }}
-                className="bg-white/90 p-5 rounded-2xl relative z-10 flex justify-between items-center border border-stone-200/60 backdrop-blur-md"
+                className="p-5 rounded-2xl relative z-10 flex justify-between items-center border backdrop-blur-md"
+                style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
               >
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-lavender-50 rounded-xl flex items-center justify-center text-2xl shadow-sm border border-stone-100">
-                    {CATEGORY_ICONS[expense.category] || expense.category.charAt(0).toUpperCase()}
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-sm border"
+                    style={{ background: 'var(--card-border)', borderColor: 'var(--card-border)' }}
+                  >
+                    {CATEGORY_ICONS[expense.category] || expense.category?.charAt(0).toUpperCase() || '🏷️'}
                   </div>
                   <div>
-                    <h4 className="font-bold font-serif text-stone-900 tracking-tight text-lg">{expense.description}</h4>
-                    <p className="text-xs text-stone-500 font-medium tracking-wide uppercase">
+                    <h4 className="font-bold font-serif tracking-tight text-lg" style={{ color: 'var(--foreground)' }}>
+                      {expense.description}
+                    </h4>
+                    <p className="text-xs font-medium tracking-wide uppercase" style={{ color: 'var(--muted)' }}>
                       Paid by {expense.paidBy.name === currentUser?.name ? 'You' : expense.paidBy.name}
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="text-right">
-                  <p className="font-mono font-light text-xl text-stone-900">₹{expense.amount.toFixed(2)}</p>
-                  <p className="text-[10px] text-stone-400 font-medium uppercase tracking-wider">
+                  <p className="font-mono font-light text-xl" style={{ color: 'var(--foreground)' }}>
+                    ₹{expense.amount.toFixed(2)}
+                  </p>
+                  <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
                     {new Date(expense.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </p>
                 </div>

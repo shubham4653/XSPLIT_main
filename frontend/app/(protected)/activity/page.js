@@ -27,29 +27,42 @@ export default function ActivityPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-pink"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blush-400"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background p-6 pb-24">
       <div className="max-w-md mx-auto space-y-6">
+
+        {/* Header */}
         <header className="flex items-center space-x-3 mb-6">
-          <div className="p-3 bg-white/5 rounded-2xl border border-white/10">
-            <Activity className="w-6 h-6 text-accent-pink" />
+          <div
+            className="p-3 rounded-2xl border"
+            style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+          >
+            <Activity className="w-6 h-6 text-blush-400" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Recent Activity</h1>
+          <h1 className="text-2xl font-bold font-serif" style={{ color: 'var(--foreground)' }}>
+            Recent Activity
+          </h1>
         </header>
 
         {activities.length === 0 ? (
-          <div className="text-center py-12 bg-white/5 rounded-3xl border border-white/10 border-dashed">
-            <Receipt className="w-12 h-12 text-white/20 mx-auto mb-3" />
-            <p className="text-gray-400">No recent activity.</p>
+          <div
+            className="text-center py-12 rounded-3xl border border-dashed"
+            style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+          >
+            <Receipt className="w-12 h-12 mx-auto mb-3" style={{ color: 'var(--muted)', opacity: 0.4 }} />
+            <p style={{ color: 'var(--muted)' }}>No recent activity.</p>
           </div>
         ) : (
-          <div className="relative border-l border-white/10 ml-4 space-y-8 pb-12">
+          <div
+            className="relative ml-4 space-y-8 pb-12 border-l-2"
+            style={{ borderColor: 'var(--card-border)' }}
+          >
             <AnimatePresence>
               {activities.map((activity, i) => (
                 <motion.div
@@ -60,21 +73,28 @@ export default function ActivityPage() {
                   className="relative pl-6"
                 >
                   {/* Timeline dot */}
-                  <div className="absolute -left-2 top-1.5 w-4 h-4 rounded-full bg-background border-2 border-accent-cyan" />
-                  
-                  <div className="glass-card neo-shadow p-4 rounded-2xl">
+                  <div
+                    className="absolute -left-2 top-1.5 w-4 h-4 rounded-full border-2 border-blush-400"
+                    style={{ background: 'var(--background)' }}
+                  />
+
+                  <div
+                    className="p-4 rounded-2xl border shadow-soft"
+                    style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center space-x-2">
                         <div className="text-xl">{activity.groupId?.icon || '🗂️'}</div>
                         <div>
-                          <p className="text-sm text-gray-400">{activity.groupId?.name}</p>
-                          <h3 className="font-bold text-white">{activity.description}</h3>
+                          <p className="text-sm" style={{ color: 'var(--muted)' }}>{activity.groupId?.name}</p>
+                          <h3 className="font-bold" style={{ color: 'var(--foreground)' }}>{activity.description}</h3>
                         </div>
                       </div>
-                      <span className="font-bold text-accent-pink">₹{activity.amount.toFixed(2)}</span>
+                      <span className="font-bold text-blush-400">₹{activity.amount.toFixed(2)}</span>
                     </div>
-                    <p className="text-xs text-gray-400">
-                      {activity.paidBy._id === user?._id ? 'You' : activity.paidBy.name} paid on {new Date(activity.date).toLocaleDateString()}
+                    <p className="text-xs" style={{ color: 'var(--muted)' }}>
+                      {activity.paidBy._id === user?._id ? 'You' : activity.paidBy.name} paid on{' '}
+                      {new Date(activity.date).toLocaleDateString()}
                     </p>
                   </div>
                 </motion.div>

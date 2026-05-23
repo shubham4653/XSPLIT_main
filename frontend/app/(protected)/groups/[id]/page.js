@@ -72,33 +72,48 @@ export default function GroupPage({ params }) {
   return (
     <div className="min-h-screen bg-background flex flex-col relative">
       {/* Header */}
-      <header className="px-4 py-4 sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-stone-200">
-        <div className="flex items-center justify-between max-w-md mx-auto">
+      <header
+        className="px-4 py-4 sticky top-0 z-40 backdrop-blur-md border-b"
+        style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+      >
+        <div className="flex items-center justify-between max-w-2xl mx-auto">
           <div className="flex items-center space-x-4 flex-1 min-w-0">
-            <button onClick={() => router.push('/dashboard')} className="p-2 bg-stone-100 rounded-full border border-stone-200 text-stone-600 shrink-0 shadow-sm transition hover:scale-105">
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="p-2 rounded-full border shrink-0 shadow-sm transition hover:scale-105"
+              style={{ background: 'var(--card-border)', borderColor: 'var(--card-border)', color: 'var(--foreground)' }}
+            >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center space-x-3 min-w-0 flex-1">
-              <div 
+              <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
-                style={{ backgroundColor: group.color ? `${group.color}33` : 'var(--color-stone-100)' }}
+                style={{ backgroundColor: group.color ? `${group.color}33` : 'var(--card-border)' }}
               >
                 <span className="text-xl">{group.icon || '🗂️'}</span>
               </div>
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl font-bold font-serif text-stone-900 truncate">{group.name}</h1>
-                <p className="text-xs text-stone-500 font-medium tracking-wide uppercase truncate">
+                <h1 className="text-xl font-bold font-serif truncate" style={{ color: 'var(--foreground)' }}>{group.name}</h1>
+                <p className="text-xs font-medium tracking-wide uppercase truncate" style={{ color: 'var(--muted)' }}>
                   {group.members.length} members
                 </p>
               </div>
             </div>
           </div>
-          
+
           <div className="flex space-x-2 shrink-0 ml-2">
-            <button onClick={handleInvite} className="p-2 bg-stone-100 rounded-full border border-stone-200 text-sky-400 hover:bg-stone-200 shadow-sm transition hover:scale-105">
+            <button
+              onClick={handleInvite}
+              className="p-2 rounded-full border shadow-sm transition hover:scale-105 text-blush-400"
+              style={{ background: 'var(--card-border)', borderColor: 'var(--card-border)' }}
+            >
               <Share2 className="w-5 h-5" />
             </button>
-            <button onClick={() => router.push(`/groups/${groupId}/settings`)} className="p-2 bg-stone-100 rounded-full border border-stone-200 text-stone-600 hover:bg-stone-200 shadow-sm transition hover:scale-105">
+            <button
+              onClick={() => router.push(`/groups/${groupId}/settings`)}
+              className="p-2 rounded-full border shadow-sm transition hover:scale-105"
+              style={{ background: 'var(--card-border)', borderColor: 'var(--card-border)', color: 'var(--foreground)' }}
+            >
               <Settings className="w-5 h-5" />
             </button>
           </div>
@@ -106,26 +121,26 @@ export default function GroupPage({ params }) {
       </header>
 
       {/* Content */}
-      <main className="flex-1 max-w-md mx-auto w-full p-4 space-y-6 pb-32">
+      <main className="flex-1 max-w-2xl mx-auto w-full p-4 space-y-6 pb-32">
         {/* Balances Section */}
-        <section className="glass-card p-6">
+        <section className="rounded-3xl border p-6 shadow-soft" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold font-serif text-stone-900">Your Balance</h2>
+            <h2 className="text-lg font-bold font-serif" style={{ color: 'var(--foreground)' }}>Your Balance</h2>
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-              netBalance > 0 ? 'bg-mint-200 text-stone-800' : 
-              netBalance < 0 ? 'bg-coral-200 text-stone-800' : 
+              netBalance > 0 ? 'bg-mint-200 text-stone-800' :
+              netBalance < 0 ? 'bg-coral-200 text-stone-800' :
               'bg-stone-200 text-stone-600'
             }`}>
               {netBalance > 0 ? 'Getting back' : netBalance < 0 ? 'You owe' : 'Settled up'}
             </span>
           </div>
-          
-          <div className="text-4xl font-mono font-light text-center my-6 text-stone-900 tracking-tight">
+
+          <div className="text-4xl font-mono font-light text-center my-6 tracking-tight" style={{ color: 'var(--foreground)' }}>
             ₹{Math.abs(netBalance).toFixed(2)}
           </div>
-          
+
           {netBalance < 0 && (
-            <button className="w-full btn-elegant text-stone-900">
+            <button className="w-full btn-elegant">
               Settle Up
             </button>
           )}
@@ -134,8 +149,8 @@ export default function GroupPage({ params }) {
         {/* Expenses List */}
         <section>
           <div className="flex justify-between items-end mb-4 px-2">
-            <h2 className="text-xl font-bold font-serif text-stone-900 tracking-tight">Expenses</h2>
-            <button className="text-sky-400 text-sm hover:underline font-medium">Filter</button>
+            <h2 className="text-xl font-bold font-serif tracking-tight" style={{ color: 'var(--foreground)' }}>Expenses</h2>
+            <button className="text-blush-400 text-sm hover:underline font-medium">Filter</button>
           </div>
           <ExpenseList expenses={expenses} currentUser={user} onExpenseDeleted={fetchGroupData} />
         </section>

@@ -57,7 +57,30 @@
   :root {
     --background: var(--color-cream-50);
     --foreground: var(--color-stone-900);
+    --card-bg: #ffffff;
+    --card-border: var(--color-stone-200);
+    --muted: var(--color-stone-500);
   }
+
+  /* Dark mode overrides — applied when <html class="dark"> */
+  .dark {
+    --background: #18181b;
+    --foreground: #f4f4f5;
+    --card-bg: #27272a;
+    --card-border: #3f3f46;
+    --muted: #a1a1aa;
+    --color-stone-100: #27272a;
+    --color-stone-200: #3f3f46;
+    --color-stone-400: #a1a1aa;
+    --color-stone-500: #71717a;
+    --color-stone-800: #e4e4e7;
+    --color-stone-900: #f4f4f5;
+  }
+}
+
+/* Smooth theme transition */
+*, *::before, *::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease;
 }
 
 body {
@@ -67,8 +90,9 @@ body {
 
 /* Glass Card Component */
 .glass-card {
-  @apply relative overflow-hidden rounded-2xl border border-stone-200/60 bg-gradient-to-br from-white/80 to-white/40 shadow-soft backdrop-blur-xl transition-all duration-300;
-  backdrop-filter: blur(24px) saturate(150%);
+  background: var(--card-bg);
+  border-color: var(--card-border);
+  @apply relative overflow-hidden rounded-2xl border shadow-soft transition-all duration-300;
 }
 
 .glass-card::before {
