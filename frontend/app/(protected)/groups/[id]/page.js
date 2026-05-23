@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, Plus, Settings, Share2 } from 'lucide-react';
+import { ChevronLeft, Plus, Settings, UserPlus, X } from 'lucide-react';
 import { useAuth } from '@/components/layout/AuthProvider';
 import { fetchApi } from '@/lib/api';
 import ExpenseList from '@/components/expense/ExpenseList';
@@ -22,11 +22,14 @@ export default function GroupPage({ params }) {
   const [loading, setLoading] = useState(true);
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [debtToSettle, setDebtToSettle] = useState(null);
+  const [showBalanceBreakdown, setShowBalanceBreakdown] = useState(false);
+  const [showInviteTooltip, setShowInviteTooltip] = useState(false);
 
   const handleInvite = () => {
     const inviteUrl = `${window.location.origin}/invite/${groupId}`;
     navigator.clipboard.writeText(inviteUrl);
-    alert('Invite link copied to clipboard!');
+    setShowInviteTooltip(true);
+    setTimeout(() => setShowInviteTooltip(false), 3000);
   };
 
   const fetchGroupData = async () => {
@@ -101,14 +104,26 @@ export default function GroupPage({ params }) {
             </div>
           </div>
 
-          <div className="flex space-x-2 shrink-0 ml-2">
+          <div className="flex space-x-2 shrink-0 ml-2 relative">
             <button
               onClick={handleInvite}
-              className="p-2 rounded-full border shadow-sm transition hover:scale-105 text-blush-400"
+              className="p-2 rounded-full border shadow-sm transition hover:scale-105 text-blush-400 relative"
               style={{ background: 'var(--card-border)', borderColor: 'var(--card-border)' }}
             >
-              <Share2 className="w-5 h-5" />
+              <UserPlus className="w-5 h-5" />
             </button>
+            <AnimatePresence>
+              {showInviteTooltip && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                  className="absolute right-12 top-10 bg-stone-900 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl z-50 font-medium"
+                >
+                  Link copied! Invite your friend
+                </motion.div>
+              )}
+            </AnimatePresence>
             <button
               onClick={() => router.push(`/groups/${groupId}/settings`)}
               className="p-2 rounded-full border shadow-sm transition hover:scale-105"
@@ -123,7 +138,11 @@ export default function GroupPage({ params }) {
       {/* Content */}
       <main className="flex-1 max-w-2xl mx-auto w-full p-4 space-y-6 pb-32">
         {/* Balances Section */}
-        <section className="rounded-3xl border p-6 shadow-soft" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+        <section 
+          onClick={() => setShowBalanceBreakdown(true)}
+          className="rounded-3xl border p-6 shadow-soft cursor-pointer hover:shadow-md transition-shadow" 
+          style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+        >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold font-serif" style={{ color: 'var(--foreground)' }}>Your Balance</h2>
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
@@ -140,7 +159,14 @@ export default function GroupPage({ params }) {
           </div>
 
           {netBalance < 0 && (
-            <button className="w-full btn-elegant">
+            <button 
+              className="w-full btn-elegant mt-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                const oweTrans = balances.find(t => t.from === user._id);
+                if (oweTrans) setDebtToSettle(oweTrans);
+              }}
+            >
               Settle Up
             </button>
           )}
@@ -198,6 +224,80 @@ export default function GroupPage({ params }) {
                 }}
                 onCancel={() => setShowAddExpense(false)}
               />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Balance Breakdown Drawer */}
+      <AnimatePresence>
+        {showBalanceBreakdown && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowBalanceBreakdown(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-x-0 bottom-0 z-50 max-w-md mx-auto bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-stone-200 flex flex-col max-h-[80vh]"
+              style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+            >
+              <div className="p-4 flex justify-between items-center border-b shrink-0" style={{ borderColor: 'var(--card-border)' }}>
+                <h2 className="text-xl font-bold font-serif tracking-tight" style={{ color: 'var(--foreground)' }}>Member Balances</h2>
+                <button 
+                  onClick={() => setShowBalanceBreakdown(false)}
+                  className="p-2 bg-stone-100 rounded-full text-stone-500 hover:bg-stone-200 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-4 overflow-y-auto flex-1 space-y-4 pb-12">
+                {balances.filter(t => t.from === user._id || t.to === user._id).length === 0 ? (
+                  <p className="text-center text-stone-500 py-8">You are completely settled up!</p>
+                ) : (
+                  balances.filter(t => t.from === user._id || t.to === user._id).map((t, idx) => {
+                    const isYouOwe = t.from === user._id;
+                    const otherUserId = isYouOwe ? t.to : t.from;
+                    const otherUser = group.members.find(m => m._id === otherUserId) || { name: 'Unknown Member' };
+                    
+                    return (
+                      <div key={idx} className="flex justify-between items-center p-4 rounded-2xl border bg-stone-50" style={{ borderColor: 'var(--card-border)' }}>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center font-bold text-stone-600 uppercase">
+                            {otherUser.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-bold text-stone-900">{otherUser.name}</p>
+                            <p className={`text-xs font-medium uppercase tracking-wide ${isYouOwe ? 'text-coral-500' : 'text-mint-600'}`}>
+                              {isYouOwe ? 'You owe them' : 'They owe you'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-mono font-bold text-lg text-stone-900">₹{t.amount.toFixed(2)}</p>
+                          {isYouOwe && (
+                            <button 
+                              onClick={() => {
+                                setShowBalanceBreakdown(false);
+                                setDebtToSettle(t);
+                              }}
+                              className="text-xs bg-stone-900 text-white px-3 py-1 rounded-full mt-1 hover:bg-stone-800"
+                            >
+                              Settle
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </motion.div>
           </>
         )}
