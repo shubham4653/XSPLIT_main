@@ -1,10 +1,8 @@
 # XSPLIT - Mobile Expense Splitting App
 
-<<<<<<< HEAD
-XSPLI is a high-performance, mobile-first web application designed to track and settle shared expenses. Built with a sleek Neobrutalist design, it simplifies complex group debts using a greedy algorithm to calculate optimal transactions. 
-=======
+
 XSPLIT is a high-performance, mobile-first web application designed to track and settle shared expenses. Built with a sleek Neobrutalist design, it simplifies complex group debts using a greedy algorithm to calculate optimal transactions. 
->>>>>>> 9e94df74542a2639976c72152920332cb2f10c1c
+
 
 ## 🚀 Features
 
