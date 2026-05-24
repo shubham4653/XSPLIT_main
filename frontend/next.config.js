@@ -11,14 +11,10 @@ const nextConfig = {
     root: __dirname,
   },
   async rewrites() {
-    const backendUrl = process.env.BACKEND_URL || 
-      (process.env.NODE_ENV === 'production' 
-        ? 'https://xsplitmain-production.up.railway.app' 
-        : 'http://localhost:5000');
     return [
       {
         source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`
+        destination: 'https://xsplitmain-production.up.railway.app/api/:path*'
       }
     ];
   },
