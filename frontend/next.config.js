@@ -16,7 +16,7 @@ const nextConfig = {
         source: '/api/:path*',
         // Route directly to the backend depending on environment
         destination: process.env.NODE_ENV === 'production' 
-          ? 'https://xsplit-main.onrender.com/api/:path*' 
+          ? 'http://xsplitmain.railway.internal/api/:path*' 
           : 'http://localhost:5000/api/:path*'
       }
     ];

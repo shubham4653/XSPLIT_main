@@ -84,7 +84,8 @@ export default function LoginPage() {
       
       // Delay redirect slightly for confetti
       setTimeout(() => {
-        router.push('/dashboard');
+        const callbackUrl = new URLSearchParams(window.location.search).get('callbackUrl') || '/dashboard';
+        router.push(callbackUrl);
       }, 1000);
 
     } catch (err) {
