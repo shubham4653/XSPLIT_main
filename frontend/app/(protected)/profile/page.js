@@ -12,8 +12,9 @@ export default function ProfilePage() {
   const router = useRouter();
   const { user, logout, setUser } = useAuth();
   const { isDark, toggleDark } = useTheme();
-  const [editingName, setEditingName] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(user?.name || '');
+  const [newUpi, setNewUpi] = useState(user?.upiId || '');
   const [saving, setSaving] = useState(false);
 
   // Get up to 2 initials from the user's name
@@ -21,9 +22,9 @@ export default function ProfilePage() {
     ? user.name.trim().split(/\s+/).slice(0, 2).map(w => w[0].toUpperCase()).join('')
     : '?';
 
-  const handleSaveName = async () => {
-    if (!newName.trim() || newName === user.name) {
-      setEditingName(false);
+  const handleSaveProfile = async () => {
+    if (!newName.trim()) {
+      setEditing(false);
       return;
     }
     
@@ -31,10 +32,10 @@ export default function ProfilePage() {
     try {
       const data = await fetchApi('/auth/profile', {
         method: 'PUT',
-        body: JSON.stringify({ name: newName })
+        body: JSON.stringify({ name: newName, upiId: newUpi })
       });
       setUser(data);
-      setEditingName(false);
+      setEditing(false);
     } catch (err) {
       console.error(err);
       alert('Failed to update profile');
@@ -58,27 +59,41 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex-1 min-w-0">
-              {editingName ? (
-                <div className="flex items-center space-x-2">
+              {editing ? (
+                <div className="flex flex-col space-y-2">
                   <input 
                     type="text" 
                     value={newName} 
                     onChange={e => setNewName(e.target.value)}
+                    placeholder="Name"
                     autoFocus
-                    className="bg-stone-100 border border-stone-300 rounded-lg px-2 py-1 text-stone-900 w-full focus:outline-none focus:border-blush-400"
+                    className="bg-stone-100 border border-stone-300 rounded-lg px-2 py-1.5 text-stone-900 w-full focus:outline-none focus:border-blush-400"
                     style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)', color: 'var(--foreground)' }}
                   />
-                  <button onClick={handleSaveName} disabled={saving} className="p-1.5 bg-blush-400 rounded-lg text-white flex-shrink-0">
-                    {saving ? <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : <Check className="w-4 h-4" />}
-                  </button>
+                  <input 
+                    type="text" 
+                    value={newUpi} 
+                    onChange={e => setNewUpi(e.target.value)}
+                    placeholder="UPI ID (e.g. name@upi)"
+                    className="bg-stone-100 border border-stone-300 rounded-lg px-2 py-1.5 text-stone-900 w-full focus:outline-none focus:border-blush-400 font-mono text-sm"
+                    style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)', color: 'var(--foreground)' }}
+                  />
+                  <div className="flex justify-end space-x-2 mt-1">
+                    <button onClick={() => setEditing(false)} className="px-3 py-1.5 text-sm font-semibold text-stone-500 hover:text-stone-700">Cancel</button>
+                    <button onClick={handleSaveProfile} disabled={saving} className="px-4 py-1.5 bg-blush-400 rounded-lg text-white flex items-center space-x-1 shadow-sm">
+                      {saving ? <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : <><Check className="w-4 h-4" /> <span className="text-sm font-bold">Save</span></>}
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-between">
+                <div className="flex items-start justify-between">
                   <div className="min-w-0">
                     <h2 className="text-xl font-bold truncate" style={{ color: 'var(--foreground)' }}>{user?.name}</h2>
                     <p className="text-sm truncate" style={{ color: 'var(--muted)' }}>{user?.email}</p>
+                    {user?.upiId && <p className="text-sm font-mono mt-1 text-blush-500 font-medium truncate">{user.upiId}</p>}
+                    {!user?.upiId && <p className="text-xs font-semibold mt-1 text-coral-500 truncate cursor-pointer hover:underline" onClick={() => setEditing(true)}>+ Add UPI ID</p>}
                   </div>
-                  <button onClick={() => setEditingName(true)} className="text-blush-400 text-sm font-semibold hover:text-blush-300 transition-colors ml-3 flex-shrink-0">
+                  <button onClick={() => setEditing(true)} className="text-blush-400 text-sm font-semibold hover:text-blush-300 transition-colors ml-3 flex-shrink-0 mt-1">
                     Edit
                   </button>
                 </div>
@@ -133,19 +148,7 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            {/* Account Details */}
-            <button 
-              onClick={() => router.push('/profile/details')}
-              className="w-full flex items-center justify-between p-4 transition-colors"
-              onMouseEnter={e => e.currentTarget.style.background = isDark ? '#3f3f46' : '#f9fafb'}
-              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-            >
-              <div className="flex items-center space-x-3" style={{ color: 'var(--foreground)' }}>
-                <UserIcon className="w-5 h-5" style={{ color: 'var(--muted)' }} />
-                <span>Account Details</span>
-              </div>
-              <ChevronRight className="w-5 h-5" style={{ color: 'var(--muted)' }} />
-            </button>
+            {/* Account Details Removed */}
           </div>
         </section>
 
