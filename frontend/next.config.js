@@ -11,10 +11,16 @@ const nextConfig = {
     root: __dirname,
   },
   async rewrites() {
+    // Read the URL from the .env file, fallback to localhost for dev if missing
+    const backendUrl = process.env.BACKEND_URL || 
+        (process.env.NODE_ENV === 'development' 
+            ? 'http://localhost:5000' 
+            : 'http://localhost:5000'); 
+            
     return [
       {
         source: '/api/:path*',
-        destination: 'https://xsplitmain-production.up.railway.app/api/:path*'
+        destination: `${backendUrl}/api/:path*`
       }
     ];
   },
