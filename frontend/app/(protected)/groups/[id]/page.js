@@ -9,6 +9,7 @@ import { fetchApi } from '@/lib/api';
 import ExpenseList from '@/components/expense/ExpenseList';
 import ExpenseForm from '@/components/expense/ExpenseForm';
 import SettleDrawer from '@/components/expense/SettleDrawer';
+import GroupCharts from '@/components/expense/GroupCharts';
 
 export default function GroupPage({ params }) {
   const unwrappedParams = use(params);
@@ -24,6 +25,7 @@ export default function GroupPage({ params }) {
   const [debtToSettle, setDebtToSettle] = useState(null);
   const [showBalanceBreakdown, setShowBalanceBreakdown] = useState(false);
   const [showInviteTooltip, setShowInviteTooltip] = useState(false);
+  const [activeTab, setActiveTab] = useState('expenses');
 
   const handleInvite = () => {
     const inviteUrl = `${window.location.origin}/invite/${groupId}`;
@@ -172,13 +174,52 @@ export default function GroupPage({ params }) {
           )}
         </section>
 
-        {/* Expenses List */}
+        {/* Tabs: Expenses / Charts */}
         <section>
           <div className="flex justify-between items-end mb-4 px-2">
-            <h2 className="text-xl font-bold font-serif tracking-tight" style={{ color: 'var(--foreground)' }}>Expenses</h2>
-            <button className="text-blush-400 text-sm hover:underline font-medium">Filter</button>
+            <h2 className="text-xl font-bold font-serif tracking-tight" style={{ color: 'var(--foreground)' }}>History</h2>
+            
+            <div className="flex bg-stone-100/80 p-1 rounded-xl shadow-inner border border-stone-200/50" style={{ background: 'var(--card-border)' }}>
+              <button
+                onClick={() => setActiveTab('expenses')}
+                className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                  activeTab === 'expenses'
+                    ? 'bg-white shadow-sm text-stone-900'
+                    : 'text-stone-500 hover:text-stone-700'
+                }`}
+                style={activeTab === 'expenses' ? { background: 'var(--card-bg)', color: 'var(--foreground)' } : { color: 'var(--muted)' }}
+              >
+                Expenses
+              </button>
+              <button
+                onClick={() => setActiveTab('charts')}
+                className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                  activeTab === 'charts'
+                    ? 'bg-white shadow-sm text-stone-900'
+                    : 'text-stone-500 hover:text-stone-700'
+                }`}
+                style={activeTab === 'charts' ? { background: 'var(--card-bg)', color: 'var(--foreground)' } : { color: 'var(--muted)' }}
+              >
+                Insights
+              </button>
+            </div>
           </div>
-          <ExpenseList expenses={expenses} currentUser={user} onExpenseDeleted={fetchGroupData} />
+          
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {activeTab === 'expenses' ? (
+                <ExpenseList expenses={expenses} currentUser={user} onExpenseDeleted={fetchGroupData} />
+              ) : (
+                <GroupCharts expenses={expenses} budget={group.budget} />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </section>
       </main>
 

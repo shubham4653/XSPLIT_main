@@ -6,7 +6,7 @@ const { generateTokens, clearTokens } = require('../utils/generateToken');
 // @access  Public
 const authUser = async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, name, phone, upiId } = req.body;
 
     // Validate input basic presence
     if (!email || !password) {
@@ -36,6 +36,8 @@ const authUser = async (req, res) => {
           _id: user._id,
           name: user.name,
           email: user.email,
+          phone: user.phone,
+          upiId: user.upiId,
           profilePicture: user.profilePicture,
           preferences: user.preferences
         }
@@ -59,6 +61,8 @@ const authUser = async (req, res) => {
       name,
       email,
       password,
+      phone,
+      upiId,
       lastLogin: Date.now()
     });
 
@@ -71,6 +75,8 @@ const authUser = async (req, res) => {
           _id: newUser._id,
           name: newUser.name,
           email: newUser.email,
+          phone: newUser.phone,
+          upiId: newUser.upiId,
           profilePicture: newUser.profilePicture,
           preferences: newUser.preferences
         }
@@ -106,6 +112,8 @@ const getUserProfile = async (req, res) => {
           _id: user._id,
           name: user.name,
           email: user.email,
+          phone: user.phone,
+          upiId: user.upiId,
           profilePicture: user.profilePicture,
           preferences: user.preferences
         }
@@ -127,6 +135,8 @@ const updateProfile = async (req, res) => {
 
     if (user) {
       user.name = req.body.name || user.name;
+      user.phone = req.body.phone !== undefined ? req.body.phone : user.phone;
+      user.upiId = req.body.upiId !== undefined ? req.body.upiId : user.upiId;
       user.profilePicture = req.body.profilePicture || user.profilePicture;
 
       const updatedUser = await user.save();
@@ -137,6 +147,8 @@ const updateProfile = async (req, res) => {
           _id: updatedUser._id,
           email: updatedUser.email,
           name: updatedUser.name,
+          phone: updatedUser.phone,
+          upiId: updatedUser.upiId,
           profilePicture: updatedUser.profilePicture
         }
       });
@@ -174,6 +186,8 @@ const getAuthStatus = async (req, res) => {
           _id: user._id,
           name: user.name,
           email: user.email,
+          phone: user.phone,
+          upiId: user.upiId,
           profilePicture: user.profilePicture,
           preferences: user.preferences
         }

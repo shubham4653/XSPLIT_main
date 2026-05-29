@@ -1,4 +1,5 @@
 import BottomNav from '@/components/layout/BottomNav';
+import OfflineSync from '@/components/layout/OfflineSync';
 
 export default function ProtectedLayout({ children }) {
   return (
@@ -11,6 +12,7 @@ export default function ProtectedLayout({ children }) {
         {children}
       </main>
       <BottomNav />
+      <OfflineSync />
     </div>
   );
 }

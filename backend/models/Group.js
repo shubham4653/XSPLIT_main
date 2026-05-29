@@ -26,6 +26,10 @@ const groupSchema = new mongoose.Schema({
     type: String, 
     default: 'USD' 
   },
+  budget: {
+    type: Number,
+    default: 0
+  },
   isArchived: { 
     type: Boolean, 
     default: false 

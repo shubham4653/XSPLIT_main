@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useAuth } from '@/components/layout/AuthProvider';
 import { useTheme } from '@/components/layout/ThemeProvider';
 import { fetchApi } from '@/lib/api';
+import { useRouter } from 'next/navigation';
 import { LogOut, User as UserIcon, Bell, Moon, Sun, ChevronRight, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { user, logout, setUser } = useAuth();
   const { isDark, toggleDark } = useTheme();
   const [editingName, setEditingName] = useState(false);
@@ -132,9 +134,12 @@ export default function ProfilePage() {
             </div>
 
             {/* Account Details */}
-            <button className="w-full flex items-center justify-between p-4 transition-colors"
-                    onMouseEnter={e => e.currentTarget.style.background = isDark ? '#3f3f46' : '#f9fafb'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+            <button 
+              onClick={() => router.push('/profile/details')}
+              className="w-full flex items-center justify-between p-4 transition-colors"
+              onMouseEnter={e => e.currentTarget.style.background = isDark ? '#3f3f46' : '#f9fafb'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
               <div className="flex items-center space-x-3" style={{ color: 'var(--foreground)' }}>
                 <UserIcon className="w-5 h-5" style={{ color: 'var(--muted)' }} />
                 <span>Account Details</span>

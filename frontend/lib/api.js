@@ -9,6 +9,7 @@ export const fetchApi = async (endpoint, options = {}) => {
   };
 
   const config = {
+    cache: 'no-store', // Disable default caching for fresh data
     ...options,
     headers,
     // Ensure cookies (JWT) are sent with every request

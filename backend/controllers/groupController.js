@@ -79,7 +79,7 @@ const getGroupBalances = async (req, res) => {
 // @access  Private
 const createGroup = async (req, res) => {
   try {
-    const { name, icon, color } = req.body;
+    const { name, icon, color, budget } = req.body;
 
     if (!name) {
       return res.status(400).json({ success: false, error: { message: 'Group name is required' } });
@@ -89,6 +89,7 @@ const createGroup = async (req, res) => {
       name,
       icon,
       color,
+      budget: Number(budget) || 0,
       owner: req.user._id,
       members: [req.user._id]
     });
@@ -105,7 +106,7 @@ const createGroup = async (req, res) => {
 const getGroups = async (req, res) => {
   try {
     const groups = await Group.find({ members: req.user._id })
-      .populate('owner', 'name email profilePicture')
+      .populate('owner', 'name email profilePicture upiId')
       .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, data: groups });
@@ -120,8 +121,8 @@ const getGroups = async (req, res) => {
 const getGroupById = async (req, res) => {
   try {
     const group = await Group.findById(req.params.id)
-      .populate('members', 'name email profilePicture')
-      .populate('owner', 'name email profilePicture');
+      .populate('members', 'name email profilePicture upiId')
+      .populate('owner', 'name email profilePicture upiId');
 
     if (!group) {
       return res.status(404).json({ success: false, error: { message: 'Group not found' } });
@@ -246,6 +247,7 @@ const updateGroup = async (req, res) => {
     group.name = req.body.name || group.name;
     group.icon = req.body.icon !== undefined ? req.body.icon : group.icon;
     group.color = req.body.color || group.color;
+    group.budget = req.body.budget !== undefined ? Number(req.body.budget) : group.budget;
 
     await group.save();
     

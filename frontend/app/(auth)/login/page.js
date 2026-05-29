@@ -18,7 +18,8 @@ const loginSchema = z.object({
 });
 
 const signupSchema = loginSchema.extend({
-  name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be less than 50 characters')
+  name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be less than 50 characters'),
+  upiId: z.string().optional()
 });
 
 export default function LoginPage() {
@@ -34,7 +35,8 @@ export default function LoginPage() {
     defaultValues: {
       email: '',
       password: '',
-      name: ''
+      name: '',
+      upiId: ''
     }
   });
 
@@ -71,7 +73,10 @@ export default function LoginPage() {
       const payload = {
         email: data.email,
         password: data.password,
-        ...(needsName && { name: data.name })
+        ...(needsName && { 
+          name: data.name,
+          upiId: data.upiId
+        })
       };
 
       const user = await fetchApi('/auth', {
@@ -98,10 +103,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden font-sans">
-      {/* Decorative background blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-accent-purple/30 rounded-full blur-[100px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-accent-pink/30 rounded-full blur-[100px]" />
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden font-sans"
+      style={{
+        backgroundImage: 'url(/auth-bg.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
+    >
+      {/* Subtle overlay to ensure the card remains perfectly readable while letting the beautiful art shine through */}
+      <div className="absolute inset-0 bg-background/40 backdrop-blur-[2px]" />
 
       <motion.div
         initial={{ y: 20, opacity: 0 }}
@@ -136,6 +147,15 @@ export default function LoginPage() {
                   />
                 </div>
                 {errors.name && <p className="text-coral-400 text-sm mt-1 ml-1 flex items-center gap-1"><AlertCircle size={14}/> {errors.name.message}</p>}
+
+                <div className="relative mt-4">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-bold">₹</span>
+                  <input
+                    {...register('upiId')}
+                    placeholder="UPI ID (Optional, for instant payments)"
+                    className="input-elegant pl-10"
+                  />
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -190,6 +210,15 @@ export default function LoginPage() {
               </>
             )}
           </button>
+
+          {!needsName && (
+            <div className="mt-6 text-center border-t border-stone-200/50 pt-5">
+              <p className="text-stone-400 text-xs font-medium leading-relaxed">
+                New here? Just enter your email and a secure password.<br/>
+                We will automatically create an account for you!
+              </p>
+            </div>
+          )}
         </form>
       </motion.div>
     </div>

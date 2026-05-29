@@ -13,6 +13,7 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
   const [receiptBase64, setReceiptBase64] = useState(null);
   const [splits, setSplits] = useState([]);
   const [apiError, setApiError] = useState('');
+  const [isRecurring, setIsRecurring] = useState(false);
 
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     defaultValues: {
@@ -81,8 +82,19 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
         amount: Number(data.amount),
         category: data.category.toLowerCase(),
         splits,
-        receipt: receiptBase64
+        receipt: receiptBase64,
+        isRecurring: isRecurring,
+        ...(isRecurring && { recurringConfig: { frequency: 'monthly' } })
       };
+
+      if (!navigator.onLine) {
+        const offlineExpenses = JSON.parse(localStorage.getItem('offline_expenses') || '[]');
+        offlineExpenses.push({ ...payload, _id: Date.now().toString() }); // temporary ID
+        localStorage.setItem('offline_expenses', JSON.stringify(offlineExpenses));
+        alert('You are offline. Expense saved locally and will sync when you reconnect.');
+        onSuccess();
+        return;
+      }
 
       await fetchApi('/expenses', {
         method: 'POST',
@@ -169,6 +181,25 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
             ))}
           </div>
         </div>
+
+        {/* Repeat Monthly Checkbox */}
+        <label className="flex items-center space-x-3 bg-stone-50 p-4 rounded-2xl border border-stone-200 cursor-pointer hover:bg-stone-100 transition-colors">
+          <div className="relative flex items-center">
+            <input 
+              type="checkbox"
+              checked={isRecurring}
+              onChange={(e) => setIsRecurring(e.target.checked)}
+              className="peer sr-only"
+            />
+            <div className="w-5 h-5 border-2 border-stone-300 rounded peer-checked:bg-blush-400 peer-checked:border-blush-400 transition-all flex items-center justify-center">
+              {isRecurring && <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+            </div>
+          </div>
+          <div>
+            <span className="text-stone-900 font-medium text-sm block">Repeat Monthly</span>
+            <span className="text-stone-500 text-xs block">Automatically add this expense every month</span>
+          </div>
+        </label>
 
         {/* Receipt Upload */}
         <div>

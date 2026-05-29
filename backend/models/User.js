@@ -19,6 +19,14 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  phone: {
+    type: String,
+    trim: true
+  },
+  upiId: {
+    type: String,
+    trim: true
+  },
   profilePicture: { 
     type: String 
   },

@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const startRecurringExpensesCron = require('./cron/recurringCron');
 
 // Load env vars
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(helmet());
 // Enable CORS
 const allowedOrigins = [
   'http://localhost:3000',
+  'http://192.168.100.8:3000',
   'https://xsplitco.vercel.app',
   process.env.FRONTEND_URL
 ].filter(Boolean);
@@ -49,7 +51,8 @@ app.use(compression());
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: process.env.NODE_ENV === 'development' ? 10000 : 1000, // high limit for dev
+  message: { success: false, error: { message: 'Too many requests, please try again later.' } }
 });
 app.use(limiter);
 
@@ -70,6 +73,10 @@ const PORT = process.env.PORT || 5000;
 const start = async () => {
   try {
     await connectDB();
+    
+    // Start background jobs
+    startRecurringExpensesCron();
+
     app.listen(PORT, () => {
       console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
     });

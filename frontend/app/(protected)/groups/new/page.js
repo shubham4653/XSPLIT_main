@@ -12,7 +12,8 @@ import { fetchApi } from '@/lib/api';
 
 const groupSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be less than 50 characters'),
-  color: z.string().optional()
+  color: z.string().optional(),
+  budget: z.string().optional()
 });
 
 const PREDEFINED_COLORS = ['#FF6B9D', '#9D4EDD', '#00F5D4', '#00BBF9', '#FEE440', '#FF9F1C'];
@@ -25,7 +26,8 @@ export default function CreateGroupPage() {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(groupSchema),
     defaultValues: {
-      name: ''
+      name: '',
+      budget: ''
     }
   });
 
@@ -35,7 +37,8 @@ export default function CreateGroupPage() {
       const payload = {
         name: data.name,
         color: selectedColor,
-        icon: '🏠' // Default icon for MVP
+        icon: '🏠', // Default icon for MVP
+        budget: Number(data.budget) || 0
       };
 
       const newGroup = await fetchApi('/groups', {
@@ -82,6 +85,19 @@ export default function CreateGroupPage() {
                 />
               </div>
               {errors.name && <p className="text-coral-400 text-sm mt-1 ml-1 flex items-center gap-1"><AlertCircle size={14}/> {errors.name.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-2 tracking-wide uppercase">Total Trip/Group Budget (Optional)</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-bold">₹</span>
+                <input
+                  {...register('budget')}
+                  type="number"
+                  placeholder="e.g. 50000"
+                  className="input-elegant pl-10"
+                />
+              </div>
             </div>
 
             <div>
