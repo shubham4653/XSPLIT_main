@@ -31,46 +31,56 @@ export default function SettleDrawer({ debt, groupId, members, onSuccess, onClos
   };
 
   return (
-    <div className="bg-background rounded-t-3xl border-t border-white/10 p-6 pb-12">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Settle Up</h2>
-        <button onClick={onClose} className="p-2 bg-white/5 rounded-full text-gray-400 hover:text-white transition-colors">
+    <div 
+      className="bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-stone-200 flex flex-col max-h-[90vh]"
+      style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+    >
+      <div className="p-4 flex justify-between items-center border-b shrink-0" style={{ borderColor: 'var(--card-border)' }}>
+        <h2 className="text-xl font-bold font-serif tracking-tight" style={{ color: 'var(--foreground)' }}>Settle Up</h2>
+        <button 
+          onClick={onClose} 
+          className="p-2 bg-stone-100 rounded-full text-stone-500 hover:bg-stone-200 transition-colors"
+        >
           <X className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="text-center mb-8">
-        <div className="w-20 h-20 bg-gradient-to-br from-accent-cyan to-accent-purple rounded-full flex items-center justify-center mx-auto mb-4 neo-shadow">
-          <Handshake className="w-10 h-10 text-white" />
+      <div className="overflow-y-auto p-6 pb-12 flex-1">
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-stone-200 shadow-sm">
+            <Handshake className="w-10 h-10 text-stone-600" />
+          </div>
+          <p className="text-stone-500 text-sm uppercase tracking-wide font-medium">
+            Are you sure you want to record a cash payment of
+          </p>
+          <p className="text-4xl font-mono font-light text-stone-900 my-4">
+            ₹{debt.amount.toFixed(2)}
+          </p>
+          <p className="text-stone-500 text-sm uppercase tracking-wide font-medium">
+            to <span className="font-bold text-stone-900">{receiver?.name || 'this user'}</span>?
+          </p>
         </div>
-        <p className="text-gray-300 text-lg">
-          Are you sure you want to record a cash payment of
-        </p>
-        <p className="text-4xl font-bold text-accent-cyan my-2">
-          ₹{debt.amount.toFixed(2)}
-        </p>
-        <p className="text-gray-300 text-lg">
-          to <span className="font-bold text-white">{receiver?.name || 'this user'}</span>?
-        </p>
-      </div>
 
-      {error && (
-        <p className="text-accent-pink text-sm text-center mb-4">{error}</p>
-      )}
-
-      <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        onClick={handleSettle}
-        disabled={loading}
-        className="w-full bg-gradient-to-r from-accent-cyan to-accent-purple text-white font-bold rounded-xl py-4 shadow-[0_0_20px_rgba(0,245,212,0.3)] disabled:opacity-50 flex items-center justify-center space-x-2"
-      >
-        {loading ? (
-          <Loader2 className="w-6 h-6 animate-spin" />
-        ) : (
-          <span>Confirm Payment</span>
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm font-medium text-center">
+            ⚠️ {error}
+          </div>
         )}
-      </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleSettle}
+          disabled={loading}
+          className="w-full bg-stone-900 text-white font-sans font-medium uppercase tracking-wide rounded-2xl py-4 hover:bg-stone-800 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2 shadow-md"
+        >
+          {loading ? (
+            <Loader2 className="w-6 h-6 animate-spin" />
+          ) : (
+            <span>Confirm Payment</span>
+          )}
+        </motion.button>
+      </div>
     </div>
   );
 }

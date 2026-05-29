@@ -166,7 +166,7 @@ const settleDebt = async (req, res) => {
       groupId,
       description: 'Settlement',
       amount: Number(amount),
-      category: 'Settlement',
+      category: 'settlement', // fixed capitalization to match Expense model enum
       paidBy: req.user._id,
       splits: [{ user: toUserId, amountOwed: Number(amount) }],
       date: Date.now()

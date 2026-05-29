@@ -14,7 +14,7 @@ export default function GroupPage({ params }) {
   const unwrappedParams = use(params);
   const groupId = unwrappedParams.id;
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const [group, setGroup] = useState(null);
   const [expenses, setExpenses] = useState([]);
@@ -55,7 +55,7 @@ export default function GroupPage({ params }) {
     fetchGroupData();
   }, [groupId]);
 
-  if (loading) {
+  if (loading || authLoading || !user || !group) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-accent-pink"></div>
@@ -206,14 +206,14 @@ export default function GroupPage({ params }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowAddExpense(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
             />
             <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-x-0 bottom-0 z-50 max-w-md mx-auto"
+              className="fixed inset-x-0 bottom-0 z-[60] max-w-md mx-auto"
             >
               <ExpenseForm
                 groupId={groupId}
@@ -238,14 +238,14 @@ export default function GroupPage({ params }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowBalanceBreakdown(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
             />
             <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-x-0 bottom-0 z-50 max-w-md mx-auto bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-stone-200 flex flex-col max-h-[80vh]"
+              className="fixed inset-x-0 bottom-0 z-[60] max-w-md mx-auto bg-white rounded-t-3xl shadow-[0_-8px_30px_rgba(0,0,0,0.12)] border-t border-stone-200 flex flex-col max-h-[80vh]"
               style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
             >
               <div className="p-4 flex justify-between items-center border-b shrink-0" style={{ borderColor: 'var(--card-border)' }}>
@@ -312,14 +312,14 @@ export default function GroupPage({ params }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setDebtToSettle(null)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
             />
             <motion.div
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-x-0 bottom-0 z-50 max-w-md mx-auto"
+              className="fixed inset-x-0 bottom-0 z-[60] max-w-md mx-auto"
             >
               <SettleDrawer
                 debt={debtToSettle}
