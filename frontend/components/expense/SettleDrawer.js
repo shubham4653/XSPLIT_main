@@ -5,28 +5,35 @@ import { useState } from 'react';
 import { X, Loader2, Handshake, QrCode, ExternalLink } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 
-export default function SettleDrawer({ debt, groupId, members, onSuccess, onClose }) {
+export default function SettleDrawer({ debt, groupId, friendId, members, onSuccess, onClose }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cash'); // 'cash' | 'upi'
+  const [amount, setAmount] = useState(debt.amount);
+  const [note, setNote] = useState('');
 
   // debt object has { from, to, amount }
   const receiver = members.find(m => m._id === debt.to);
   const hasUpi = Boolean(receiver?.upiId);
 
   const upiDeepLink = hasUpi 
-    ? `upi://pay?pa=${receiver.upiId}&pn=${encodeURIComponent(receiver.name)}&am=${debt.amount.toFixed(2)}&cu=INR`
+    ? `upi://pay?pa=${receiver.upiId}&pn=${encodeURIComponent(receiver.name)}&am=${Number(amount).toFixed(2)}&cu=INR`
     : '';
 
   const handleSettle = async () => {
     setLoading(true);
     setError('');
     try {
-      await fetchApi(`/groups/${groupId}/settle`, {
+      const endpoint = friendId 
+        ? `/users/friends/${friendId}/settle`
+        : `/groups/${groupId}/settle`;
+        
+      await fetchApi(endpoint, {
         method: 'POST',
         body: JSON.stringify({
           toUserId: debt.to,
-          amount: debt.amount
+          amount: Number(amount),
+          note
         })
       });
       onSuccess();
@@ -51,7 +58,7 @@ export default function SettleDrawer({ debt, groupId, members, onSuccess, onClos
         </button>
       </div>
 
-      <div className="overflow-y-auto p-6 pb-12 flex-1">
+      <div className="overflow-y-auto p-6 pb-28 flex-1">
         
         {/* Payment Method Toggle */}
         <div className="flex bg-stone-100 p-1 rounded-xl mb-6">
@@ -83,12 +90,29 @@ export default function SettleDrawer({ debt, groupId, members, onSuccess, onClos
             <p className="text-stone-500 text-sm uppercase tracking-wide font-medium">
               Are you sure you want to record a cash payment of
             </p>
-            <p className="text-4xl font-mono font-light text-stone-900 my-4">
-              ₹{debt.amount.toFixed(2)}
-            </p>
-            <p className="text-stone-500 text-sm uppercase tracking-wide font-medium">
+            <div className="flex justify-center items-center my-4">
+              <span className="text-4xl font-mono font-light text-stone-900 mr-2">₹</span>
+              <input 
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="text-4xl font-mono font-light text-stone-900 bg-transparent border-b-2 border-stone-300 w-32 text-center focus:outline-none focus:border-blush-400"
+                min="0.01"
+                step="0.01"
+              />
+            </div>
+            <p className="text-stone-500 text-sm uppercase tracking-wide font-medium mb-6">
               to <span className="font-bold text-stone-900">{receiver?.name || 'this user'}</span>?
             </p>
+            <div className="px-4">
+              <input 
+                type="text" 
+                placeholder="Add a note (optional)" 
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blush-400 focus:ring-1 focus:ring-blush-400"
+              />
+            </div>
           </div>
         ) : (
           <div className="text-center mb-8">
@@ -109,9 +133,26 @@ export default function SettleDrawer({ debt, groupId, members, onSuccess, onClos
                     className="w-48 h-48 object-contain"
                   />
                 </div>
-                <p className="text-2xl font-mono font-light text-stone-900 my-2">
-                  ₹{debt.amount.toFixed(2)}
-                </p>
+                <div className="flex justify-center items-center my-2">
+                  <span className="text-2xl font-mono font-light text-stone-900 mr-2">₹</span>
+                  <input 
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="text-2xl font-mono font-light text-stone-900 bg-transparent border-b border-stone-300 w-24 text-center focus:outline-none focus:border-blush-400"
+                    min="0.01"
+                    step="0.01"
+                  />
+                </div>
+                <div className="px-4 mb-4">
+                  <input 
+                    type="text" 
+                    placeholder="Add a note (optional)" 
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    className="w-full bg-stone-50 border border-stone-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blush-400"
+                  />
+                </div>
                 <a 
                   href={upiDeepLink}
                   className="w-full bg-blush-400 text-white font-sans font-bold uppercase tracking-wide rounded-2xl py-3 hover:bg-blush-500 transition-colors flex items-center justify-center space-x-2 shadow-md"

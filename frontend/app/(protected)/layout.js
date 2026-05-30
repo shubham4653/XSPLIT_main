@@ -1,5 +1,6 @@
 import BottomNav from '@/components/layout/BottomNav';
 import OfflineSync from '@/components/layout/OfflineSync';
+import OnboardingTour from '@/components/ui/OnboardingTour';
 
 export default function ProtectedLayout({ children }) {
   return (
@@ -9,6 +10,7 @@ export default function ProtectedLayout({ children }) {
       </main>
       <BottomNav />
       <OfflineSync />
+      <OnboardingTour />
     </div>
   );
 }

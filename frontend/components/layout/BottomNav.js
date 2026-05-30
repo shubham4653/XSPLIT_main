@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Users, PlusCircle, Activity, User } from 'lucide-react';
+import { Home, Users, PlusCircle, Handshake, User } from 'lucide-react';
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -11,7 +11,7 @@ export default function BottomNav() {
     { href: '/dashboard', icon: Home, label: 'Home' },
     { href: '/groups', icon: Users, label: 'Groups' },
     { href: '/groups/new', icon: PlusCircle, label: 'Add', isFab: true },
-    { href: '/activity', icon: Activity, label: 'Activity' },
+    { href: '/friends', icon: Handshake, label: 'Friends' },
     { href: '/profile', icon: User, label: 'Profile' }
   ];
 

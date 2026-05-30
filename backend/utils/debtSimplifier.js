@@ -22,13 +22,14 @@ const simplifyDebts = (balances) => {
     let debtor = debtors[j];
 
     let amount = Math.min(creditor.balance, Math.abs(debtor.balance));
-    amount = Math.round(amount * 100) / 100; // Round to 2 decimals
+    
+    let roundedAmount = Math.round(amount * 100) / 100;
 
-    if (amount > 0) {
+    if (roundedAmount > 0) {
       transactions.push({
         from: debtor.userId,
         to: creditor.userId,
-        amount: amount
+        amount: roundedAmount
       });
     }
 

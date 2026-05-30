@@ -186,7 +186,7 @@ const getGroupById = async (req, res) => {
 const settleDebt = async (req, res) => {
   try {
     const groupId = req.params.id;
-    const { toUserId, amount } = req.body;
+    const { toUserId, amount, note } = req.body;
 
     if (!toUserId || !amount || amount <= 0) {
       return res.status(400).json({ success: false, error: { message: 'Valid toUserId and amount are required' } });
@@ -207,7 +207,7 @@ const settleDebt = async (req, res) => {
     const Expense = require('../models/Expense');
     const expense = await Expense.create({
       groupId,
-      description: 'Settlement',
+      description: note ? `Settlement: ${note}` : 'Settlement',
       amount: Number(amount),
       category: 'settlement', // fixed capitalization to match Expense model enum
       paidBy: req.user._id,
