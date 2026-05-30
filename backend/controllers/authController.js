@@ -1,5 +1,8 @@
 const User = require('../models/User');
 const { generateTokens, clearTokens } = require('../utils/generateToken');
+const { OAuth2Client } = require('google-auth-library');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // @desc    Auth user & get token (Unified Login/Signup)
 // @route   POST /api/auth
@@ -160,6 +163,30 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// @desc    Update user password
+// @route   PUT /api/auth/profile/password
+// @access  Private
+const updatePassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({ success: false, error: { message: 'Please provide a new password' } });
+    }
+
+    const user = await User.findById(req.user._id).select('+password');
+    if (!user) {
+      return res.status(404).json({ success: false, error: { message: 'User not found' } });
+    }
+
+    user.password = password; // pre-save hook will hash it
+    await user.save();
+
+    res.status(200).json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: error.message } });
+  }
+};
+
 // @desc    Get auth status without throwing 401
 // @route   GET /api/auth/status
 // @access  Public
@@ -198,10 +225,77 @@ const getAuthStatus = async (req, res) => {
   }
 };
 
+// @desc    Google Login
+// @route   POST /api/auth/google
+// @access  Public
+const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ success: false, error: { message: 'No Google token provided' } });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return res.status(400).json({ success: false, error: { message: 'Invalid Google token' } });
+    }
+
+    let user = await User.findOne({ email: payload.email.toLowerCase() });
+
+    if (!user) {
+      // Create new user via Google
+      user = await User.create({
+        name: payload.name,
+        email: payload.email,
+        authProvider: 'google',
+        googleId: payload.sub,
+        profilePicture: payload.picture,
+        lastLogin: Date.now()
+      });
+    } else {
+      // If user exists, update last login and provider if needed
+      user.lastLogin = Date.now();
+      if (!user.googleId) {
+        user.googleId = payload.sub;
+        if (user.authProvider === 'local') {
+          // You could keep it local or change it. Let's not overwrite if they had a local pass.
+        }
+      }
+      await user.save();
+    }
+
+    generateTokens(res, user._id);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        upiId: user.upiId,
+        profilePicture: user.profilePicture,
+        preferences: user.preferences
+      }
+    });
+
+  } catch (error) {
+    console.error('Google Auth Error:', error);
+    return res.status(500).json({ success: false, error: { message: error.message } });
+  }
+};
+
 module.exports = {
   authUser,
   logoutUser,
   getUserProfile,
   updateProfile,
-  getAuthStatus
+  getAuthStatus,
+  updatePassword,
+  googleLogin
 };

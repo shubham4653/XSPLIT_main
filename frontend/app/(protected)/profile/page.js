@@ -5,7 +5,7 @@ import { useAuth } from '@/components/layout/AuthProvider';
 import { useTheme } from '@/components/layout/ThemeProvider';
 import { fetchApi } from '@/lib/api';
 import { useRouter } from 'next/navigation';
-import { LogOut, User as UserIcon, Bell, Moon, Sun, ChevronRight, Check } from 'lucide-react';
+import { LogOut, User as UserIcon, Bell, Moon, Sun, ChevronRight, Check, Key } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function ProfilePage() {
@@ -16,6 +16,9 @@ export default function ProfilePage() {
   const [newName, setNewName] = useState(user?.name || '');
   const [newUpi, setNewUpi] = useState(user?.upiId || '');
   const [saving, setSaving] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState('');
 
   // Get up to 2 initials from the user's name
   const initials = user?.name
@@ -41,6 +44,28 @@ export default function ProfilePage() {
       alert('Failed to update profile');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      setPasswordMessage('Password must be at least 6 characters.');
+      return;
+    }
+    setSavingPassword(true);
+    setPasswordMessage('');
+    try {
+      await fetchApi('/auth/profile/password', {
+        method: 'PUT',
+        body: JSON.stringify({ password: newPassword })
+      });
+      setPasswordMessage('Password updated successfully!');
+      setNewPassword('');
+      setTimeout(() => setPasswordMessage(''), 3000);
+    } catch (err) {
+      setPasswordMessage(err.message || 'Failed to update password');
+    } finally {
+      setSavingPassword(false);
     }
   };
 
@@ -149,6 +174,38 @@ export default function ProfilePage() {
             </div>
 
             {/* Account Details Removed */}
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <h3 className="text-sm font-bold uppercase tracking-wider pl-2" style={{ color: 'var(--muted)' }}>Security</h3>
+          <div className="rounded-3xl border overflow-hidden shadow-soft p-4 space-y-3"
+               style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+            <div className="flex items-center space-x-3 mb-2" style={{ color: 'var(--foreground)' }}>
+              <Key className="w-5 h-5" style={{ color: 'var(--muted)' }} />
+              <span className="font-semibold">Set / Change Password</span>
+            </div>
+            <p className="text-xs" style={{ color: 'var(--muted)' }}>Set a new password for your account without needing the old one.</p>
+            <input 
+              type="password" 
+              value={newPassword} 
+              onChange={e => setNewPassword(e.target.value)}
+              placeholder="New Password (min 6 characters)"
+              className="bg-stone-100 border border-stone-300 rounded-lg px-3 py-2 text-stone-900 w-full focus:outline-none focus:border-blush-400"
+              style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)', color: 'var(--foreground)' }}
+            />
+            <div className="flex items-center justify-between mt-2">
+              <span className={`text-sm ${passwordMessage.includes('successfully') ? 'text-green-500' : 'text-coral-500'}`}>
+                {passwordMessage}
+              </span>
+              <button 
+                onClick={handlePasswordChange} 
+                disabled={savingPassword || !newPassword} 
+                className="px-4 py-2 bg-blush-400 rounded-xl text-white font-bold flex items-center space-x-1 shadow-sm disabled:opacity-50"
+              >
+                {savingPassword ? <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" /> : <span>Update</span>}
+              </button>
+            </div>
           </div>
         </section>
 

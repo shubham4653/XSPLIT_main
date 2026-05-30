@@ -115,6 +115,48 @@ const getGroups = async (req, res) => {
   }
 };
 
+// @desc    Get all user's friends (1-on-1 groups)
+// @route   GET /api/groups/friends
+// @access  Private
+const getFriends = async (req, res) => {
+  try {
+    const friends = await Group.find({ members: req.user._id, type: 'friend' })
+      .populate('members', 'name email profilePicture upiId')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: friends });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: error.message } });
+  }
+};
+
+// @desc    Get past collaborators (unique users from all groups user is in)
+// @route   GET /api/groups/collaborators
+// @access  Private
+const getCollaborators = async (req, res) => {
+  try {
+    const groups = await Group.find({ members: req.user._id })
+      .populate('members', 'name email profilePicture');
+    
+    const collaboratorMap = new Map();
+    
+    groups.forEach(group => {
+      group.members.forEach(member => {
+        if (member._id.toString() !== req.user._id.toString()) {
+          if (!collaboratorMap.has(member._id.toString())) {
+            collaboratorMap.set(member._id.toString(), member);
+          }
+        }
+      });
+    });
+
+    const collaborators = Array.from(collaboratorMap.values());
+    res.status(200).json({ success: true, data: collaborators });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: error.message } });
+  }
+};
+
 // @desc    Get single group by ID
 // @route   GET /api/groups/:id
 // @access  Private
@@ -232,6 +274,36 @@ const joinGroup = async (req, res) => {
   }
 };
 
+// @desc    Add a member to an existing group
+// @route   POST /api/groups/:id/members
+// @access  Private
+const addMemberToGroup = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    if (!userId) return res.status(400).json({ success: false, error: { message: 'User ID is required' } });
+
+    const group = await Group.findById(req.params.id);
+    if (!group) return res.status(404).json({ success: false, error: { message: 'Group not found' } });
+    
+    if (!group.members.includes(req.user._id.toString())) {
+      return res.status(403).json({ success: false, error: { message: 'Not authorized' } });
+    }
+
+    if (group.members.includes(userId)) {
+      return res.status(400).json({ success: false, error: { message: 'User is already a member' } });
+    }
+
+    group.members.push(userId);
+    await group.save();
+
+    cache.del(`balances_${group._id}`);
+
+    res.status(200).json({ success: true, message: 'Member added successfully', data: group });
+  } catch (error) {
+    res.status(500).json({ success: false, error: { message: error.message } });
+  }
+};
+
 // @desc    Update group details
 // @route   PUT /api/groups/:id
 // @access  Private
@@ -320,6 +392,8 @@ module.exports = {
   updateGroup,
   leaveGroup,
   deleteGroup,
+  getCollaborators,
+  addMemberToGroup,
   // Export cache for invalidation when adding/editing expenses later
   cache
 };

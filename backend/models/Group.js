@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const groupSchema = new mongoose.Schema({
   name: { 
     type: String, 
-    required: true,
-    trim: true
+    required: [true, 'Group name is required'],
+    trim: true,
+    maxlength: [50, 'Name cannot be more than 50 characters']
   },
   icon: {
     type: String

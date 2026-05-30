@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, Loader2, Save, Trash2, LogOut, User as UserIcon } from 'lucide-react';
+import { ChevronLeft, Loader2, Save, Trash2, LogOut, User as UserIcon, Plus, Copy, Check } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
 import { useAuth } from '@/components/layout/AuthProvider';
 
@@ -18,13 +18,25 @@ export default function GroupSettingsPage({ params }) {
   const [processingDanger, setProcessingDanger] = useState(false);
   const [name, setName] = useState('');
   const [color, setColor] = useState('#FF6B9D');
+  const [collaborators, setCollaborators] = useState([]);
+  const [addingUserId, setAddingUserId] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const fetchGroup = async () => {
     try {
-      const res = await fetchApi(`/groups/${groupId}`);
+      const [res, collabRes] = await Promise.all([
+        fetchApi(`/groups/${groupId}`),
+        fetchApi('/groups/collaborators')
+      ]);
       setGroup(res);
       setName(res.name || '');
       setColor(res.color || '#FF6B9D');
+      
+      // Filter out people already in this group
+      const memberIds = res.members.map(m => m._id);
+      const filteredCollabs = collabRes.filter(c => !memberIds.includes(c._id));
+      setCollaborators(filteredCollabs);
+      
     } catch (err) {
       console.error(err);
       router.push('/dashboard');
@@ -52,6 +64,29 @@ export default function GroupSettingsPage({ params }) {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleAddMember = async (userId) => {
+    setAddingUserId(userId);
+    try {
+      await fetchApi(`/groups/${groupId}/members`, {
+        method: 'POST',
+        body: JSON.stringify({ userId })
+      });
+      // Refresh group data
+      fetchGroup();
+    } catch (err) {
+      alert(err.message || 'Failed to add member');
+    } finally {
+      setAddingUserId(null);
+    }
+  };
+
+  const handleCopyInvite = () => {
+    const inviteUrl = `${window.location.origin}/invite/${groupId}`;
+    navigator.clipboard.writeText(inviteUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleLeaveGroup = async () => {
@@ -193,6 +228,55 @@ export default function GroupSettingsPage({ params }) {
                 )}
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Add Members (Past Collaborators & Invite Link) */}
+        <section className="glass-card p-6">
+          <h2 className="text-lg font-bold font-serif mb-4" style={{ color: 'var(--foreground)' }}>Add Members</h2>
+          
+          <div className="space-y-3 max-h-48 overflow-y-auto pr-2 mb-4">
+            {collaborators.length > 0 ? (
+              collaborators.map(collab => (
+                <div key={collab._id} className="flex items-center justify-between p-2 rounded-xl border" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-blush-200 rounded-full flex items-center justify-center font-bold text-stone-900 text-xs">
+                      {collab.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm" style={{ color: 'var(--foreground)' }}>{collab.name}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleAddMember(collab._id)}
+                    disabled={addingUserId === collab._id}
+                    className="p-1.5 bg-blush-400 rounded-lg text-white hover:bg-blush-300 transition-colors disabled:opacity-50"
+                  >
+                    {addingUserId === collab._id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm italic text-center py-2" style={{ color: 'var(--muted)' }}>No past friends to add.</p>
+            )}
+          </div>
+
+          <div className="pt-4 border-t" style={{ borderColor: 'var(--card-border)' }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--muted)' }}>Invite via Link</label>
+            <div className="flex space-x-2">
+              <input
+                readOnly
+                value={`${typeof window !== 'undefined' ? window.location.origin : ''}/invite/${groupId}`}
+                className="input-elegant flex-1 text-xs truncate"
+                style={{ background: 'var(--card-bg)', color: 'var(--foreground)', borderColor: 'var(--card-border)' }}
+              />
+              <button
+                onClick={handleCopyInvite}
+                className="px-3 py-2 bg-stone-200 hover:bg-stone-300 rounded-xl transition-colors flex items-center justify-center text-stone-700"
+              >
+                {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </section>
 
