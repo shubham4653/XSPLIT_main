@@ -16,8 +16,8 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl border-t pb-safe shadow-[0_-8px_30px_rgba(0,0,0,0.05)]"
-         style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
+    <nav className="fixed bottom-0 inset-x-0 z-[100] backdrop-blur-xl border-t shadow-[0_-8px_30px_rgba(0,0,0,0.05)]"
+         style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="flex justify-around items-center h-20 max-w-2xl mx-auto px-4 relative">
         {navItems.map((item) => {
           const isActive = pathname === item.href;

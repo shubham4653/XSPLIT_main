@@ -39,6 +39,10 @@ export const AuthProvider = ({ children }) => {
       console.error(err);
     }
     setUser(null);
+    // Reset to light mode on logout so landing pages look correct
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('xsplit-theme', 'light');
+    
     window.location.href = '/login';
   };
 

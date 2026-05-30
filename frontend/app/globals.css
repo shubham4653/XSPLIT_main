@@ -48,7 +48,7 @@
   --shadow-blush: 0 8px 24px 0 rgba(255, 179, 200, 0.4);
   --shadow-mint: 0 8px 24px 0 rgba(168, 240, 200, 0.4);
   --shadow-soft: 0 4px 16px 0 rgba(100, 95, 85, 0.12);
-  
+
   /* Animations */
   --animate-shimmer: shimmer 2s infinite ease-in-out;
 }
@@ -79,7 +79,9 @@
 }
 
 /* Smooth theme transition */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.15s ease;
 }
 
@@ -127,14 +129,20 @@ body {
 
 /* Keyframes */
 @keyframes shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
 }
 
 /* Hide scrollbar */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

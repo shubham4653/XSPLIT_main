@@ -103,16 +103,44 @@ export default function LoginPage() {
   };
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden font-sans"
-      style={{
-        backgroundImage: 'url(/auth-bg.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
-      }}
-    >
-      {/* Subtle overlay to ensure the card remains perfectly readable while letting the beautiful art shine through */}
-      <div className="absolute inset-0 bg-background/40 backdrop-blur-[2px]" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden font-sans bg-stone-50">
+      
+      {/* CSS-based Geometric & Glow Background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Soft gradient base */}
+        <div className="absolute inset-0 bg-gradient-to-br from-stone-50 via-white to-stone-100" />
+        
+        {/* Large glowing orbs */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-mint-200/40 rounded-full blur-[80px]" />
+        <div className="absolute top-1/2 -right-32 w-[500px] h-[500px] bg-sky-200/30 rounded-full blur-[100px]" />
+        <div className="absolute -bottom-40 left-1/4 w-[600px] h-[400px] bg-blush-200/25 rounded-full blur-[100px]" />
+        
+        {/* Crisp geometric shapes */}
+        <motion.div 
+          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }} 
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 right-1/4 w-32 h-32 rounded-3xl bg-gradient-to-br from-peach-200 to-peach-300 opacity-60 backdrop-blur-md border border-white shadow-xl transform rotate-12"
+        />
+        <motion.div 
+          animate={{ y: [0, 30, 0], rotate: [0, -10, 0] }} 
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-32 left-1/4 w-24 h-24 rounded-full bg-gradient-to-tr from-mint-300 to-sky-200 opacity-50 backdrop-blur-md border border-white shadow-lg"
+        />
+        <motion.div 
+          animate={{ x: [0, 20, 0], rotate: [45, 60, 45] }} 
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute top-1/3 left-16 w-16 h-16 rounded-xl bg-gradient-to-br from-blush-300 to-blush-400 opacity-40 backdrop-blur-sm border border-white shadow-md transform rotate-45"
+        />
+        
+        {/* Delicate grid pattern overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]" 
+          style={{ 
+            backgroundImage: `radial-gradient(#000 1px, transparent 1px)`, 
+            backgroundSize: '24px 24px' 
+          }} 
+        />
+      </div>
 
       <motion.div
         initial={{ y: 20, opacity: 0 }}

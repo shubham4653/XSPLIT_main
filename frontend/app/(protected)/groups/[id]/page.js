@@ -224,17 +224,18 @@ export default function GroupPage({ params }) {
       </main>
 
       {/* Floating Add Button */}
-      <div className="fixed bottom-24 inset-x-0 flex justify-center z-40 pointer-events-none">
+      <div className="fixed bottom-24 right-4 sm:right-6 z-40 pb-[env(safe-area-inset-bottom)]">
         <motion.button 
           onClick={() => setShowAddExpense(true)}
-          className="pointer-events-auto w-16 h-16 rounded-full bg-gradient-to-br from-blush-300 to-blush-400 shadow-blush shadow-xl flex items-center justify-center text-stone-900"
-          whileHover={{ scale: 1.1, rotate: 90 }}
-          whileTap={{ scale: 0.9 }}
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
+          className="flex items-center gap-2.5 px-5 py-3.5 rounded-full bg-stone-900 text-white shadow-xl shadow-stone-900/20"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ scale: 0, y: 20 }}
+          animate={{ scale: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 260, damping: 20 }}
         >
-          <Plus className="w-8 h-8" />
+          <Plus className="w-5 h-5" />
+          <span className="font-semibold text-sm tracking-wide">Add Expense</span>
         </motion.button>
       </div>
 
