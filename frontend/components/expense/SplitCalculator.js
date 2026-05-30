@@ -130,7 +130,7 @@ export default function SplitCalculator({ members, totalAmount, onChange }) {
             onClick={() => handleModeSwitch(mode.id)}
             className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${
               splitMode === mode.id
-                ? 'bg-white text-stone-900 shadow-sm border border-stone-200' 
+                ? 'bg-foreground text-background shadow-sm border border-stone-200' 
                 : 'text-stone-500 hover:text-stone-700'
             }`}
           >
@@ -164,7 +164,7 @@ export default function SplitCalculator({ members, totalAmount, onChange }) {
                     step="0.01"
                     value={inputs[member._id] === undefined ? '' : inputs[member._id]}
                     onChange={(e) => handleInputChange(member._id, e.target.value)}
-                    className="w-full pl-8 pr-3 py-1.5 bg-white border border-stone-200 rounded-lg focus:outline-none focus:border-blush-400 focus:ring-2 focus:ring-blush-200 text-right font-mono text-stone-900"
+                    className="w-full pl-8 pr-3 py-1.5 bg-transparent border border-stone-200 rounded-lg focus:outline-none focus:border-blush-400 focus:ring-2 focus:ring-blush-200 text-right font-mono text-foreground"
                     placeholder="0.00"
                   />
                 </div>
@@ -176,7 +176,7 @@ export default function SplitCalculator({ members, totalAmount, onChange }) {
                       step="0.1"
                       value={inputs[member._id] === undefined ? '' : inputs[member._id]}
                       onChange={(e) => handleInputChange(member._id, e.target.value)}
-                      className="w-full pl-2 pr-6 py-1.5 bg-white border border-stone-200 rounded-lg focus:outline-none focus:border-blush-400 focus:ring-2 focus:ring-blush-200 text-right font-mono text-stone-900"
+                      className="w-full pl-2 pr-6 py-1.5 bg-transparent border border-stone-200 rounded-lg focus:outline-none focus:border-blush-400 focus:ring-2 focus:ring-blush-200 text-right font-mono text-foreground"
                       placeholder="0"
                     />
                     <span className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 font-mono">%</span>
@@ -192,7 +192,7 @@ export default function SplitCalculator({ members, totalAmount, onChange }) {
                     step="0.1"
                     value={inputs[member._id] === undefined ? '' : inputs[member._id]}
                     onChange={(e) => handleInputChange(member._id, e.target.value)}
-                    className="w-16 px-2 py-1.5 bg-white border border-stone-200 rounded-lg focus:outline-none focus:border-blush-400 focus:ring-2 focus:ring-blush-200 text-center font-mono text-stone-900"
+                    className="w-16 px-2 py-1.5 bg-transparent border border-stone-200 rounded-lg focus:outline-none focus:border-blush-400 focus:ring-2 focus:ring-blush-200 text-center font-mono text-foreground"
                     placeholder="1"
                   />
                   <span className="font-mono text-stone-400 w-16 text-right text-xs">

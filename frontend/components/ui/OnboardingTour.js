@@ -109,7 +109,7 @@ export default function OnboardingTour() {
 
             <button
               onClick={handleNext}
-              className="bg-stone-900 text-white px-6 py-2.5 rounded-xl font-bold text-sm tracking-wide flex items-center space-x-2 shadow-md hover:bg-stone-800 transition-colors"
+              className="bg-foreground text-background px-6 py-2.5 rounded-xl font-bold text-sm tracking-wide flex items-center space-x-2 shadow-md hover:opacity-90 transition-opacity"
             >
               <span>{currentStep === TOUR_STEPS.length - 1 ? "Get Started" : "Next"}</span>
               {currentStep === TOUR_STEPS.length - 1 ? (

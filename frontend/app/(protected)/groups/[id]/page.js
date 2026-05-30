@@ -121,7 +121,7 @@ export default function GroupPage({ params }) {
                   initial={{ opacity: 0, y: 10, scale: 0.9 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                  className="absolute right-12 top-10 bg-stone-900 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl z-50 font-medium"
+                  className="absolute right-12 top-10 bg-foreground text-background text-xs px-3 py-1.5 rounded-lg whitespace-nowrap shadow-xl z-50 font-medium"
                 >
                   Link copied! Invite your friend
                 </motion.div>
@@ -228,7 +228,7 @@ export default function GroupPage({ params }) {
       <div className="fixed bottom-24 right-4 sm:right-6 z-40 pb-[env(safe-area-inset-bottom)]">
         <motion.button 
           onClick={() => setShowAddExpense(true)}
-          className="flex items-center gap-2.5 px-5 py-3.5 rounded-full bg-stone-900 text-white shadow-xl shadow-stone-900/20"
+          className="flex items-center gap-2.5 px-5 py-3.5 rounded-full bg-foreground text-background shadow-xl hover:opacity-90 transition-opacity"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           initial={{ scale: 0, y: 20 }}
@@ -330,7 +330,7 @@ export default function GroupPage({ params }) {
                                 setShowBalanceBreakdown(false);
                                 setDebtToSettle(t);
                               }}
-                              className="text-xs bg-stone-900 text-white px-3 py-1 rounded-full mt-1 hover:bg-stone-800"
+                              className="text-xs bg-foreground text-background px-3 py-1 rounded-full mt-1 hover:opacity-90"
                             >
                               Settle
                             </button>

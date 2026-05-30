@@ -138,7 +138,7 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
           <input
             {...register('description', { required: true })}
             placeholder="What was this for?"
-            className="w-full bg-transparent text-stone-900 placeholder:text-stone-400 focus:outline-none font-medium text-lg"
+            className="w-full bg-transparent text-foreground placeholder:text-stone-400 focus:outline-none font-medium text-lg"
           />
           {errors.description && <p className="text-red-400 text-sm mt-1">Description is required</p>}
         </div>
@@ -147,7 +147,7 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
         <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 focus-within:border-mint-300 focus-within:ring-2 focus-within:ring-mint-200/50 transition-all flex items-center justify-between">
           <div>
             <label className="block text-xs font-medium text-stone-500 uppercase tracking-wide mb-1">Amount</label>
-            <div className="flex items-center text-3xl font-mono text-stone-900">
+            <div className="flex items-center text-3xl font-mono text-foreground">
               <span className="text-stone-400 mr-1">₹</span>
               <input
                 {...register('amount', { required: true, valueAsNumber: true })}
@@ -196,7 +196,7 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
             </div>
           </div>
           <div>
-            <span className="text-stone-900 font-medium text-sm block">Repeat Monthly</span>
+            <span className="text-foreground font-medium text-sm block">Repeat Monthly</span>
             <span className="text-stone-500 text-xs block">Automatically add this expense every month</span>
           </div>
         </label>
@@ -240,7 +240,7 @@ export default function ExpenseForm({ groupId, members, onSuccess, onCancel }) {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-stone-900 text-white rounded-2xl py-4 font-sans font-medium uppercase tracking-wide hover:bg-stone-800 transition-colors"
+          className="w-full bg-foreground text-background rounded-2xl py-4 font-sans font-medium uppercase tracking-wide hover:opacity-90 transition-colors"
         >
           {isSubmitting ? (
             <Loader2 className="w-6 h-6 animate-spin mx-auto" />

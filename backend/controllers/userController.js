@@ -1,5 +1,7 @@
 const Group = require('../models/Group');
 const Expense = require('../models/Expense');
+const User = require('../models/User');
+const Notification = require('../models/Notification');
 const { simplifyDebts } = require('../utils/debtSimplifier');
 
 // @desc    Get dashboard summary for user
@@ -86,7 +88,6 @@ const getDashboardSummary = async (req, res) => {
   }
 };
 
-const Notification = require('../models/Notification');
 
 // @desc    Get activity feed for user (recent expenses across all groups)
 // @route   GET /api/users/activity
@@ -157,7 +158,6 @@ const markNotificationRead = async (req, res) => {
 const getFriendsBalances = async (req, res) => {
   try {
     const userId = req.user._id.toString();
-    const User = require('../models/User');
 
     const groups = await Group.find({ members: userId }).lean();
     const groupIds = groups.map(g => g._id);
@@ -343,11 +343,45 @@ const settleWithFriend = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Send a reminder notification to a friend
+ * @route   POST /api/users/friends/:friendId/remind
+ * @access  Private
+ */
+const remindFriend = async (req, res) => {
+  try {
+    const friendId = req.params.friendId;
+    const userId = req.user.id;
+
+    // Check if the friend exists
+    const friend = await User.findById(friendId);
+    if (!friend) {
+      return res.status(404).json({ success: false, error: { message: 'Friend not found' } });
+    }
+
+    // Check if they owe you money (optional, but good for validation)
+    // We'll trust the frontend for now to simplify, or we can just send the reminder anyway.
+
+    await Notification.create({
+      userId: friendId,
+      type: 'reminder',
+      title: 'Payment Reminder',
+      message: `${req.user.name} has reminded you to settle up your pending balance.`
+    });
+
+    res.status(200).json({ success: true, data: { message: 'Reminder sent successfully' } });
+  } catch (error) {
+    console.error('Error sending reminder:', error);
+    res.status(500).json({ success: false, error: { message: 'Failed to send reminder' } });
+  }
+};
+
 module.exports = {
   getDashboardSummary,
   getActivityFeed,
   getNotifications,
   markNotificationRead,
   getFriendsBalances,
-  settleWithFriend
+  settleWithFriend,
+  remindFriend
 };

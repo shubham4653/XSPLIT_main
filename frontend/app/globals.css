@@ -26,6 +26,7 @@
   --color-coral-300: #FFA5A5;
   --color-coral-400: #FF8D8D;
 
+  --color-stone-50: #FDFCF8;
   --color-stone-100: #F5F4F1;
   --color-stone-200: #EAE8E3;
   --color-stone-300: #D1CFC8;
@@ -62,19 +63,70 @@
     --muted: var(--color-stone-500);
   }
 
-  /* Dark mode overrides — applied when <html class="dark"> */
+  /* Dark mode overrides — Cool Neon / OLED aesthetic */
   .dark {
-    --background: #18181b;
-    --foreground: #f4f4f5;
-    --card-bg: #27272a;
-    --card-border: #3f3f46;
+    /* Base background: Deep sleek OLED black */
+    --background: #09090b;
+    /* zinc-950 */
+    --foreground: #fafafa;
+    /* zinc-50 */
+
+    /* Cards: Slightly lighter for elevation, with subtle borders */
+    --card-bg: #18181b;
+    /* zinc-900 */
+    --card-border: #27272a;
+    /* zinc-800 */
     --muted: #a1a1aa;
-    --color-stone-100: #27272a;
-    --color-stone-200: #3f3f46;
-    --color-stone-400: #a1a1aa;
+    /* zinc-400 */
+
+    /* Map stone colors for dark mode */
+    --color-stone-50: #09090b;
+    --color-stone-100: #18181b;
+    --color-stone-200: #27272a;
+    --color-stone-300: #3f3f46;
+    --color-stone-400: #52525b;
     --color-stone-500: #71717a;
+    --color-stone-600: #a1a1aa;
+    --color-stone-700: #d4d4d8;
     --color-stone-800: #e4e4e7;
-    --color-stone-900: #f4f4f5;
+    --color-stone-900: #fafafa;
+
+    /* Blush -> Electric Fuchsia / Purple for primary accents */
+    --color-blush-200: #701a75;
+    /* fuchsia-900 */
+    --color-blush-300: #d946ef;
+    /* fuchsia-500 */
+    --color-blush-400: #a855f7;
+    /* purple-500 */
+
+    /* Mint -> Neon Emerald for positive balances */
+    --color-mint-200: #064e3b;
+    /* emerald-900 */
+    --color-mint-300: #10b981;
+    /* emerald-500 */
+    --color-mint-400: #34d399;
+    /* emerald-400 */
+
+    /* Coral -> Neon Rose/Red for negative balances */
+    --color-coral-200: #881337;
+    /* rose-900 */
+    --color-coral-300: #f43f5e;
+    /* rose-500 */
+    --color-coral-400: #fb7185;
+    /* rose-400 */
+
+    /* Sky -> Bright Cyan for secondary accents */
+    --color-sky-200: #164e63;
+    /* cyan-900 */
+    --color-sky-300: #06b6d4;
+    /* cyan-500 */
+    --color-sky-400: #22d3ee;
+    /* cyan-400 */
+
+    /* Shadows - make them glow! */
+    --shadow-blush: 0 8px 32px -4px rgba(217, 70, 239, 0.25);
+    --shadow-mint: 0 8px 32px -4px rgba(16, 185, 129, 0.25);
+    --shadow-soft: 0 4px 24px -2px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -123,7 +175,8 @@ body {
 
 /* Input Component */
 .input-elegant {
-  @apply w-full px-4 py-3 rounded-xl bg-white/80 border-2 border-stone-200 text-stone-900 placeholder:text-stone-400 transition-all duration-200 focus:outline-none focus:border-blush-300 focus:ring-4 focus:ring-blush-200/30;
+  @apply w-full px-4 py-3 rounded-xl border-2 border-stone-200 text-stone-900 placeholder:text-stone-400 transition-all duration-200 focus:outline-none focus:border-blush-300 focus:ring-4 focus:ring-blush-200/30;
+  background-color: color-mix(in srgb, var(--card-bg) 80%, transparent);
   backdrop-filter: blur(4px);
 }
 

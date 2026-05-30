@@ -118,12 +118,7 @@ export default function DashboardPage() {
                         <div
                           key={notif._id}
                           onClick={() => !notif.read && markAsRead(notif._id)}
-                          className="p-3 rounded-2xl mb-1 cursor-pointer transition-all hover:scale-[1.01]"
-                          style={{
-                            opacity: notif.read ? 0.5 : 1,
-                            background: notif.read ? 'transparent' : 'rgba(255,179,200,0.12)',
-                            border: notif.read ? 'none' : '1px solid rgba(255,157,183,0.25)'
-                          }}
+                          className={`p-3 rounded-2xl mb-1 cursor-pointer transition-all hover:scale-[1.01] ${notif.read ? 'opacity-50' : 'bg-blush-300/15 border border-blush-400/25'}`}
                         >
                           <div className="flex items-start space-x-2">
                             <div className="w-2 h-2 rounded-full bg-blush-400 mt-1.5 flex-shrink-0" style={{ opacity: notif.read ? 0 : 1 }} />

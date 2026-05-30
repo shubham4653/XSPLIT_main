@@ -40,7 +40,7 @@ export default function BottomNav() {
               className="flex flex-col items-center justify-center w-14 h-full space-y-1.5 transition-colors"
               style={{ color: isActive ? 'var(--foreground)' : 'var(--muted)' }}
             >
-              <div className="p-2 rounded-2xl transition-all" style={{ background: isActive ? 'rgba(255,179,200,0.15)' : 'transparent' }}>
+              <div className={`p-2 rounded-2xl transition-all ${isActive ? 'bg-blush-300/20' : ''}`}>
                 <Icon className={`w-6 h-6 ${isActive ? 'text-blush-400' : ''}`} />
               </div>
               <span className={`text-[10px] font-medium tracking-wide ${isActive ? 'font-semibold' : ''}`}>{item.label}</span>

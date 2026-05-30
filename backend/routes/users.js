@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getDashboardSummary, getActivityFeed, getNotifications, markNotificationRead, getFriendsBalances, settleWithFriend } = require('../controllers/userController');
+const { getDashboardSummary, getActivityFeed, getNotifications, markNotificationRead, getFriendsBalances, settleWithFriend, remindFriend } = require('../controllers/userController');
 const { protect } = require('../middleware/auth');
 
 // Get dashboard summary
@@ -16,5 +16,6 @@ router.put('/notifications/:id/read', protect, markNotificationRead);
 // Friends
 router.get('/friends', protect, getFriendsBalances);
 router.post('/friends/:friendId/settle', protect, settleWithFriend);
+router.post('/friends/:friendId/remind', protect, remindFriend);
 
 module.exports = router;

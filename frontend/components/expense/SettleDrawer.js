@@ -65,7 +65,7 @@ export default function SettleDrawer({ debt, groupId, friendId, members, onSucce
           <button
             onClick={() => setPaymentMethod('cash')}
             className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all flex items-center justify-center space-x-2 ${
-              paymentMethod === 'cash' ? 'bg-white shadow-sm text-stone-900 border border-stone-200' : 'text-stone-500 hover:text-stone-700'
+              paymentMethod === 'cash' ? 'bg-foreground text-background shadow-sm border border-stone-200' : 'text-stone-500 hover:text-stone-700'
             }`}
           >
             <Handshake className="w-4 h-4" />
@@ -74,7 +74,7 @@ export default function SettleDrawer({ debt, groupId, friendId, members, onSucce
           <button
             onClick={() => setPaymentMethod('upi')}
             className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all flex items-center justify-center space-x-2 ${
-              paymentMethod === 'upi' ? 'bg-white shadow-sm text-stone-900 border border-stone-200' : 'text-stone-500 hover:text-stone-700'
+              paymentMethod === 'upi' ? 'bg-foreground text-background shadow-sm border border-stone-200' : 'text-stone-500 hover:text-stone-700'
             }`}
           >
             <QrCode className="w-4 h-4" />
@@ -177,7 +177,7 @@ export default function SettleDrawer({ debt, groupId, friendId, members, onSucce
           whileTap={{ scale: 0.98 }}
           onClick={handleSettle}
           disabled={loading || (paymentMethod === 'upi' && !hasUpi)}
-          className="w-full bg-stone-900 text-white font-sans font-medium uppercase tracking-wide rounded-2xl py-4 hover:bg-stone-800 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2 shadow-md"
+          className="w-full bg-foreground text-background font-sans font-medium uppercase tracking-wide rounded-2xl py-4 hover:opacity-90 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2 shadow-md"
         >
           {loading ? (
             <Loader2 className="w-6 h-6 animate-spin" />

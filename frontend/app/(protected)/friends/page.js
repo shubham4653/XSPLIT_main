@@ -11,6 +11,7 @@ export default function FriendsPage() {
   const { user } = useAuth();
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [remindingId, setRemindingId] = useState(null);
   const [selectedDebt, setSelectedDebt] = useState(null); // { friend, amount, type: 'owe' | 'owed' }
 
   useEffect(() => {
@@ -25,6 +26,19 @@ export default function FriendsPage() {
       console.error('Failed to load friends', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRemind = async (friendId) => {
+    setRemindingId(friendId);
+    try {
+      await fetchApi(`/users/friends/${friendId}/remind`, { method: 'POST' });
+      alert('Reminder sent successfully!');
+    } catch (err) {
+      console.error('Failed to send reminder', err);
+      alert('Failed to send reminder. Please try again.');
+    } finally {
+      setRemindingId(null);
     }
   };
 
@@ -105,16 +119,18 @@ export default function FriendsPage() {
                         amount: Math.abs(friend.balance),
                         type: 'owe'
                       })}
-                      className="px-4 py-2 bg-stone-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-stone-800 transition-colors shadow-md"
+                      className="px-4 py-2 bg-foreground text-background rounded-xl text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity shadow-md"
                     >
                       Settle
                     </button>
                   )}
                   {friend.balance > 0 && (
                     <button
-                      className="px-4 py-2 bg-stone-100 text-stone-400 rounded-xl text-xs font-bold uppercase tracking-wider cursor-default border"
+                      onClick={() => handleRemind(friend._id)}
+                      disabled={remindingId === friend._id}
+                      className="px-4 py-2 bg-stone-100 text-stone-600 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-stone-200 transition-colors border shadow-sm disabled:opacity-50"
                     >
-                      Remind
+                      {remindingId === friend._id ? 'Sending...' : 'Remind'}
                     </button>
                   )}
                 </motion.div>
