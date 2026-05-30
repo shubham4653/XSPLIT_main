@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, Plus, Settings, UserPlus, X } from 'lucide-react';
 import { useAuth } from '@/components/layout/AuthProvider';
@@ -126,13 +127,13 @@ export default function GroupPage({ params }) {
                 </motion.div>
               )}
             </AnimatePresence>
-            <button
-              onClick={() => router.push(`/groups/${groupId}/settings`)}
+            <Link
+              href={`/groups/${groupId}/settings`}
               className="p-2 rounded-full border shadow-sm transition hover:scale-105"
               style={{ background: 'var(--card-border)', borderColor: 'var(--card-border)', color: 'var(--foreground)' }}
             >
               <Settings className="w-5 h-5" />
-            </button>
+            </Link>
           </div>
         </div>
       </header>

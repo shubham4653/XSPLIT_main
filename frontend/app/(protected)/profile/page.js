@@ -133,18 +133,6 @@ export default function ProfilePage() {
           <div className="rounded-3xl border overflow-hidden shadow-soft"
                style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
 
-            {/* Notifications */}
-            <button className="w-full flex items-center justify-between p-4 transition-colors border-b"
-                    style={{ borderColor: 'var(--card-border)' }}
-                    onMouseEnter={e => e.currentTarget.style.background = isDark ? '#3f3f46' : '#f9fafb'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-              <div className="flex items-center space-x-3" style={{ color: 'var(--foreground)' }}>
-                <Bell className="w-5 h-5" style={{ color: 'var(--muted)' }} />
-                <span>Notifications</span>
-              </div>
-              <ChevronRight className="w-5 h-5" style={{ color: 'var(--muted)' }} />
-            </button>
-            
             {/* Dark Mode toggle */}
             <div className="w-full flex items-center justify-between p-4 border-b"
                  style={{ borderColor: 'var(--card-border)' }}>
