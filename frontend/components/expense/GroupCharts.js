@@ -101,7 +101,13 @@ export default function GroupCharts({ expenses, budget = 0 }) {
 
   return (
     <div className="bg-card p-4 rounded-3xl border shadow-soft transition-all" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>
-      <h3 className="text-lg font-bold font-serif mb-6 px-2" style={{ color: 'var(--foreground)' }}>Spending Insights</h3>
+      <div className="flex justify-between items-start mb-6 px-2">
+        <h3 className="text-lg font-bold font-serif" style={{ color: 'var(--foreground)' }}>Spending Insights</h3>
+        <div className="text-right">
+          <span className="block text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted)' }}>Total Spent</span>
+          <span className="font-mono font-bold text-lg" style={{ color: 'var(--foreground)' }}>₹{grandTotal.toFixed(2)}</span>
+        </div>
+      </div>
       
       {budget > 0 && (
         <div className="mb-6 px-2">

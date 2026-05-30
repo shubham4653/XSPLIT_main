@@ -113,7 +113,7 @@ export default function GroupSettingsPage({ params }) {
     }
   };
 
-  if (loading) {
+  if (loading || !group) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <header className="px-4 py-4 sticky top-0 z-40 backdrop-blur-md border-b" style={{ background: 'var(--card-bg)', borderColor: 'var(--card-border)' }}>

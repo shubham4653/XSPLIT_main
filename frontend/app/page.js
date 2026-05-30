@@ -286,15 +286,6 @@ function VerticalScrollSection({ items }) {
    On mobile: stacked vertically instead
 ───────────────────────────────────────────── */
 function HorizontalScrollSection({ items }) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -303,84 +294,45 @@ function HorizontalScrollSection({ items }) {
   const x = useTransform(scrollYProgress, [0, 1], ["0vw", `-${(items.length - 1) * 100}vw`]);
   const smoothX = useSpring(x, { stiffness: 80, damping: 25 });
 
-  /* ── Mobile: simple vertical cards ── */
-  if (isMobile) {
-    return (
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-lg mx-auto space-y-12">
-          {items.map((feat, i) => (
-            <motion.div
-              key={feat.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ delay: 0.05, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col gap-6"
-            >
-              {/* Illustration */}
-              <div className="relative w-full">
-                <div
-                  className="absolute inset-0 rounded-2xl blur-2xl opacity-40"
-                  style={{ background: feat.accent, transform: "scale(0.9) translateY(8%)" }}
-                />
-                <div className="relative rounded-2xl bg-white border border-stone-100 p-5 shadow-lg">
-                  <img src={feat.image} alt={feat.tag} className="w-full max-w-[240px] mx-auto h-auto" />
-                </div>
-              </div>
-              {/* Text */}
-              <div>
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-3 ${feat.tagClass}`}>
-                  {feat.iconEl} {feat.tag}
-                </span>
-                <h3 className="font-serif font-bold text-stone-900 text-2xl leading-[1.15] mb-3">{feat.headline}</h3>
-                <p className="text-stone-600 text-base leading-relaxed">{feat.body}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-    );
-  }
-
-  /* ── Desktop: horizontal scroll pan ── */
   return (
     <section
       ref={containerRef}
       style={{ height: `${items.length * 100}vh` }}
       className="relative w-full"
     >
-      <div className="sticky top-0 h-screen overflow-hidden bg-white">
+      <div className="sticky top-0 h-[100svh] overflow-hidden bg-white">
         {/* Labels */}
-        <div className="absolute top-6 left-6 z-20">
-          <span className="text-[11px] font-bold tracking-widest uppercase text-stone-400">More Features</span>
+        <div className="absolute top-20 sm:top-24 left-4 sm:left-6 z-20">
+          <span className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-stone-400">More Features</span>
         </div>
-        <div className="absolute top-6 right-6 z-20">
-          <span className="text-[11px] font-bold tracking-widest uppercase text-stone-400">↔ Scroll to explore</span>
+        <div className="absolute top-20 sm:top-24 right-4 sm:right-6 z-20 flex items-center gap-1.5">
+          <span className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-stone-400">Scroll to explore</span>
+          <ArrowRight className="w-3 h-3 text-stone-400" />
         </div>
 
-        <motion.div style={{ x: smoothX }} className="flex h-full will-change-transform">
+        <motion.div style={{ x: smoothX }} className="flex h-[100svh] will-change-transform pt-16 sm:pt-20">
           {items.map((feat, i) => (
             <div
               key={feat.id}
-              className="flex-shrink-0 w-screen h-screen flex items-center justify-center px-8 md:px-16 lg:px-24"
+              className="flex-shrink-0 w-screen h-full flex items-center justify-center px-4 sm:px-8 md:px-16 lg:px-24"
               style={{ background: i % 2 === 0 ? "#f5f4f1" : "#ffffff" }}
             >
-              <div className="max-w-5xl w-full grid grid-cols-2 gap-14 items-center">
+              <div className="max-w-5xl w-full flex flex-col md:grid md:grid-cols-2 gap-6 sm:gap-14 items-center justify-center h-full pb-8 sm:pb-0">
                 {/* Illustration */}
                 <motion.div
                   initial={{ opacity: 0, x: -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: false, margin: "-15%" }}
                   transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                  className="flex justify-center"
+                  className="flex justify-center w-full mt-10 md:mt-0"
                 >
-                  <div className="relative w-full max-w-[360px]">
+                  <div className="relative w-full max-w-[240px] sm:max-w-[360px]">
                     <div
                       className="absolute inset-0 rounded-[32px] blur-2xl opacity-50"
                       style={{ background: feat.accent, transform: "scale(0.88) translateY(10%)" }}
                     />
-                    <div className="relative rounded-[32px] bg-white border border-stone-100 p-7 shadow-2xl">
-                      <img src={feat.image} alt={feat.tag} className="w-full h-auto drop-shadow-md" />
+                    <div className="relative rounded-3xl md:rounded-[32px] bg-white border border-stone-100 p-5 sm:p-7 shadow-2xl">
+                      <img src={feat.image} alt={feat.tag} className="w-full h-auto drop-shadow-md object-contain max-h-[160px] sm:max-h-[300px]" />
                     </div>
                   </div>
                 </motion.div>
@@ -391,20 +343,21 @@ function HorizontalScrollSection({ items }) {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: false, margin: "-15%" }}
                   transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex flex-col items-center md:items-start text-center md:text-left"
                 >
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-5 ${feat.tagClass}`}>
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase mb-3 sm:mb-5 ${feat.tagClass}`}>
                     {feat.iconEl} {feat.tag}
                   </span>
-                  <h3 className="font-serif font-bold text-stone-900 text-4xl xl:text-5xl leading-[1.1] mb-5">
+                  <h3 className="font-serif font-bold text-stone-900 text-2xl sm:text-4xl xl:text-5xl leading-[1.1] mb-3 sm:mb-5 tracking-tight">
                     {feat.headline}
                   </h3>
-                  <p className="text-stone-600 text-lg leading-relaxed max-w-sm mb-6">
+                  <p className="text-stone-600 text-sm sm:text-lg leading-relaxed max-w-sm mb-4 sm:mb-6">
                     {feat.body}
                   </p>
                   {/* Counter */}
                   <div className="flex items-center gap-3">
                     <span className="text-stone-400 font-bold text-sm">{String(i + 1).padStart(2, "0")}</span>
-                    <div className="h-px bg-stone-200 w-16" />
+                    <div className="h-px bg-stone-200 w-12 sm:w-16" />
                     <span className="text-stone-300 text-sm">{String(items.length).padStart(2, "0")}</span>
                   </div>
                 </motion.div>
